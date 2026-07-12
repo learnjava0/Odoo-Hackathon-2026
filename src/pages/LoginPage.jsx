@@ -1,75 +1,116 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LogIn } from "lucide-react";
+import { Truck } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
-import { Button } from "../components/ui/Button";
+import { ROLE_LABELS } from "../constants/roles";
 import { useAuth } from "../context/AuthContext";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import { Select } from "../components/ui/Select";
 
-const loginSchema = z.object({
+const schema = z.object({
   email: z.string().email(),
-  password: z.string().min(4)
+  password: z.string().min(4),
+  role: z.enum(["FLEET_MANAGER", "DRIVER", "SAFETY_OFFICER", "FINANCIAL_ANALYST"]),
+  remember: z.boolean().optional(),
 });
 
-function LoginPage() {
-  const { isAuthenticated, login } = useAuth();
+export default function LoginPage() {
+  const { isAuthenticated, login, loading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname ?? "/";
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting }
+    formState: { errors },
   } = useForm({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
-      email: "admin@transitops.dev",
-      password: "demo1234"
-    }
+      email: "maya@transitops.io",
+      password: "demo1234",
+      role: "FLEET_MANAGER",
+      remember: true,
+    },
   });
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
+  }
+
+  async function onSubmit(values) {
+    await login({ email: values.email, password: values.password, role: values.role });
+    navigate(from, { replace: true });
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-lg border border-slate-800 bg-slate-900/85 p-8 shadow-2xl shadow-slate-950/40">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-400">TransitOps</p>
-        <h1 className="mt-3 text-3xl font-semibold text-white">Sign in</h1>
-        <p className="mt-2 text-sm text-slate-400">Use one of the mock accounts to enter the dashboard scaffold.</p>
-
-        <form className="mt-8 space-y-5" onSubmit={handleSubmit(login)}>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-200" htmlFor="email">
-              Email
-            </label>
-            <input
-              id="email"
-              className="h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 text-sm text-white outline-none transition focus:border-cyan-400"
-              {...register("email")}
-            />
-            {errors.email ? <p className="mt-2 text-sm text-rose-400">{errors.email.message}</p> : null}
+    <div className="grid min-h-screen bg-slate-950 lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="hidden flex-col justify-between bg-white p-10 text-slate-900 lg:flex">
+        <div>
+          <div className="mb-8 flex items-center gap-3">
+            <div className="rounded-2xl bg-amber-100 p-3 text-amber-600">
+              <Truck className="h-6 w-6" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-semibold">TransitOps</h1>
+              <p className="text-sm text-slate-500">Operational command for modern fleet teams</p>
+            </div>
           </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-200" htmlFor="password">
-              Password
-            </label>
-            <input
-              id="password"
+          <h2 className="max-w-lg text-4xl font-semibold leading-tight">
+            Replace fleet spreadsheets with a live operations console.
+          </h2>
+          <p className="mt-4 max-w-lg text-base text-slate-600">
+            Dispatch trips, monitor service windows, track fuel costs, and keep compliance visible from one control room.
+          </p>
+        </div>
+        <div className="panel-muted bg-slate-50 p-6">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-amber-600">Who can log in</p>
+          <div className="mt-4 grid gap-3">
+            {Object.values(ROLE_LABELS).map((role) => (
+              <div key={role} className="rounded-lg border border-slate-200 bg-white p-4">
+                <p className="font-medium">{role}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="flex items-center justify-center p-6">
+        <div className="panel w-full max-w-lg p-8">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-amber-400">Welcome back</p>
+          <h2 className="text-3xl font-semibold text-slate-100">Sign in to TransitOps</h2>
+          <p className="mt-3 text-sm text-slate-400">Use one of the seeded demo accounts to explore the role-based flows.</p>
+          <form className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)}>
+            <Input label="Email" placeholder="maya@transitops.io" error={errors.email?.message} {...register("email")} />
+            <Input
+              label="Password"
               type="password"
-              className="h-11 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 text-sm text-white outline-none transition focus:border-cyan-400"
+              placeholder="Enter your password"
+              error={errors.password?.message}
               {...register("password")}
             />
-            {errors.password ? <p className="mt-2 text-sm text-rose-400">{errors.password.message}</p> : null}
-          </div>
-
-          <Button className="w-full justify-center" type="submit" disabled={isSubmitting}>
-            <LogIn size={16} />
-            {isSubmitting ? "Signing in..." : "Enter workspace"}
-          </Button>
-        </form>
-      </div>
+            <Select label="Demo role" error={errors.role?.message} {...register("role")}>
+              {Object.entries(ROLE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </Select>
+            <div className="flex items-center justify-between text-sm">
+              <label className="flex items-center gap-2 text-slate-400">
+                <input type="checkbox" className="rounded border-slate-700 bg-slate-900" {...register("remember")} />
+                Remember me
+              </label>
+              <button type="button" className="text-slate-500">
+                Forgot password?
+              </button>
+            </div>
+            <Button className="w-full" type="submit" loading={loading}>
+              Sign In
+            </Button>
+          </form>
+        </div>
+      </section>
     </div>
   );
 }
-
-export default LoginPage;
