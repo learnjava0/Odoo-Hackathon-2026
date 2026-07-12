@@ -5,13 +5,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        surface: {
+        ink: {
           950: "#020617",
           900: "#0f172a",
-          800: "#1e293b"
-        }
-      }
-    }
+          850: "#162032",
+        },
+      },
+      boxShadow: {
+        panel: "0 0 0 1px rgba(51,65,85,0.7)",
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 };
