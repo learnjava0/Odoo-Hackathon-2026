@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="frontend/src/assets/Dashboard.png" alt="TransitOps Dashboard" width="100%" />
-
 # TransitOps
 
 ### Smart Transport Operations Platform
@@ -91,67 +89,72 @@ Dispatch trips · Monitor service windows · Track fuel costs · Keep compliance
 
 ### Frontend
 
-| Technology | Version | Purpose |
-|---|---|---|
-| [React](https://react.dev) | 18.3 | UI framework |
-| [Vite](https://vitejs.dev) | 7.1 | Build tool & dev server |
-| [Tailwind CSS](https://tailwindcss.com) | 3.4 | Utility-first styling |
-| [React Router](https://reactrouter.com) | v6 | Client-side routing & protected routes |
-| [React Hook Form](https://react-hook-form.com) | 7 | Form state management |
-| [Zod](https://zod.dev) | 4 | Schema validation |
-| [Recharts](https://recharts.org) | 3 | Bar, pie, and line charts |
-| [jsPDF](https://github.com/parallax/jsPDF) | latest | PDF generation |
-| [jspdf-autotable](https://github.com/simonbengtsson/jsPDF-AutoTable) | latest | PDF table rendering |
-| [Sonner](https://sonner.emilkowal.ski) | 2 | Toast notifications |
-| [Lucide React](https://lucide.dev) | 0.542 | Icon set |
-| [Axios](https://axios-http.com) | 1.11 | HTTP client |
-| [date-fns](https://date-fns.org) | 4 | Date formatting & manipulation |
+| Technology                                                           | Version | Purpose                                |
+| -------------------------------------------------------------------- | ------- | -------------------------------------- |
+| [React](https://react.dev)                                           | 18.3    | UI framework                           |
+| [Vite](https://vitejs.dev)                                           | 7.1     | Build tool & dev server                |
+| [Tailwind CSS](https://tailwindcss.com)                              | 3.4     | Utility-first styling                  |
+| [React Router](https://reactrouter.com)                              | v6      | Client-side routing & protected routes |
+| [React Hook Form](https://react-hook-form.com)                       | 7       | Form state management                  |
+| [Zod](https://zod.dev)                                               | 4       | Schema validation                      |
+| [Recharts](https://recharts.org)                                     | 3       | Bar, pie, and line charts              |
+| [jsPDF](https://github.com/parallax/jsPDF)                           | latest  | PDF generation                         |
+| [jspdf-autotable](https://github.com/simonbengtsson/jsPDF-AutoTable) | latest  | PDF table rendering                    |
+| [Sonner](https://sonner.emilkowal.ski)                               | 2       | Toast notifications                    |
+| [Lucide React](https://lucide.dev)                                   | 0.542   | Icon set                               |
+| [Axios](https://axios-http.com)                                      | 1.11    | HTTP client                            |
+| [date-fns](https://date-fns.org)                                     | 4       | Date formatting & manipulation         |
 
 ### Backend
 
-| Technology | Version | Purpose |
-|---|---|---|
-| [Java](https://openjdk.org) | 21 | Language |
-| [Spring Boot](https://spring.io/projects/spring-boot) | 4.1 | Application framework |
-| [Spring Security](https://spring.io/projects/spring-security) | 4.1 | Authentication & authorization |
-| [Spring Data JPA](https://spring.io/projects/spring-data-jpa) | 4.1 | ORM / database abstraction |
-| [Hibernate](https://hibernate.org) | 6 | JPA implementation |
-| [PostgreSQL](https://www.postgresql.org) | 15 | Production database |
-| [H2](https://h2database.com) | latest | In-memory DB for dev/test |
-| [JJWT](https://github.com/jwtk/jjwt) | 0.11.5 | JWT token generation & validation |
-| [Lombok](https://projectlombok.org) | latest | Boilerplate reduction |
-| [Bean Validation](https://beanvalidation.org) | 3 | Request payload validation |
-| [Maven](https://maven.apache.org) | 3.9 | Build & dependency management |
+| Technology                                                    | Version | Purpose                           |
+| ------------------------------------------------------------- | ------- | --------------------------------- |
+| [Java](https://openjdk.org)                                   | 21      | Language                          |
+| [Spring Boot](https://spring.io/projects/spring-boot)         | 4.1     | Application framework             |
+| [Spring Security](https://spring.io/projects/spring-security) | 4.1     | Authentication & authorization    |
+| [Spring Data JPA](https://spring.io/projects/spring-data-jpa) | 4.1     | ORM / database abstraction        |
+| [Hibernate](https://hibernate.org)                            | 6       | JPA implementation                |
+| [PostgreSQL](https://www.postgresql.org)                      | 15      | Production database               |
+| [H2](https://h2database.com)                                  | latest  | In-memory DB for dev/test         |
+| [JJWT](https://github.com/jwtk/jjwt)                          | 0.11.5  | JWT token generation & validation |
+| [Lombok](https://projectlombok.org)                           | latest  | Boilerplate reduction             |
+| [Bean Validation](https://beanvalidation.org)                 | 3       | Request payload validation        |
+| [Maven](https://maven.apache.org)                             | 3.9     | Build & dependency management     |
 
 ---
 
 ## Features
 
 ### 🔐 Authentication & Role-Based Access
+
 - JWT-based stateless authentication
 - 4 roles: Fleet Manager, Dispatcher, Safety Officer, Financial Analyst
 - Route-level and component-level access control
 - Automatic session restoration from sessionStorage
 
 ### 📊 Dashboard
+
 - 7 live KPI cards with real-time counts
 - Filterable recent trips table (by vehicle type, status, region)
 - Vehicle status distribution with animated progress bars
 - Full dark mode support
 
 ### 🚚 Fleet Registry
+
 - Complete vehicle CRUD with duplicate registration validation
 - Sortable & filterable table (type, status, free-text search)
 - Per-vehicle operational cost calculation
 - Retired/In Shop vehicles automatically excluded from dispatch
 
 ### 👨‍✈️ Driver Compliance
+
 - License expiry tracking with red EXPIRED alerts
 - SUSPENDED + EXPIRED drivers blocked from trip assignment
 - Safety score per driver
 - Auto-update driver status based on active trips
 
 ### 🗺️ Trip Dispatcher
+
 - Full lifecycle: Draft → Dispatched → Completed → Cancelled
 - Smart vehicle picker (AVAILABLE only)
 - Smart driver picker (excludes ON_TRIP, SUSPENDED, EXPIRED)
@@ -159,18 +162,21 @@ Dispatch trips · Monitor service windows · Track fuel costs · Keep compliance
 - Trip completion captures final odometer & fuel consumed
 
 ### 🔧 Maintenance
+
 - Log service records with vehicle, type, cost, and date
 - Vehicle automatically moves to IN_SHOP on log creation
 - Vehicle returns to AVAILABLE when service is closed
 - Split layout: form on left, service log table on right
 
 ### ⛽ Fuel & Expenses
+
 - Fuel log entries linked to trips
 - Miscellaneous expenses (tolls, permits, allowances)
 - Total Operational Cost = Fuel + Maintenance + Other
 - All costs displayed in Indian Rupees (₹)
 
 ### 📈 Analytics & PDF Export
+
 - Fuel efficiency per vehicle (km/l)
 - Fleet utilization percentage
 - Monthly revenue bar chart
@@ -180,6 +186,7 @@ Dispatch trips · Monitor service windows · Track fuel costs · Keep compliance
 - **One-click PDF export** — styled A4 report with all data
 
 ### ⚙️ Settings & RBAC Editor
+
 - Editable role-to-page access matrix
 - Click cells to cycle: None → View → Full
 - General depot settings (name, currency, distance unit)
@@ -188,16 +195,16 @@ Dispatch trips · Monitor service windows · Track fuel costs · Keep compliance
 
 ## Roles & Access
 
-| Page | Fleet Manager | Dispatcher | Safety Officer | Financial Analyst |
-|---|:---:|:---:|:---:|:---:|
-| Dashboard | ✅ Full | ✅ Own | ✅ Full | ✅ Full |
-| Fleet | ✅ Full | ❌ | ❌ | 👁️ View |
-| Drivers | ✅ Full | ❌ | 👁️ View | ❌ |
-| Trips | ✅ Full | ✅ Full | 👁️ View | ❌ |
-| Maintenance | ✅ Full | ❌ | ❌ | 👁️ View |
-| Fuel & Expenses | ✅ Full | ❌ | ❌ | ✅ Full |
-| Analytics | ✅ Full | ❌ | ❌ | ✅ Full |
-| Settings | ✅ Full | ❌ | ❌ | ❌ |
+| Page            | Fleet Manager | Dispatcher | Safety Officer | Financial Analyst |
+| --------------- | :-----------: | :--------: | :------------: | :---------------: |
+| Dashboard       |    ✅ Full    |   ✅ Own   |    ✅ Full     |      ✅ Full      |
+| Fleet           |    ✅ Full    |     ❌     |       ❌       |      👁️ View      |
+| Drivers         |    ✅ Full    |     ❌     |    👁️ View     |        ❌         |
+| Trips           |    ✅ Full    |  ✅ Full   |    👁️ View     |        ❌         |
+| Maintenance     |    ✅ Full    |     ❌     |       ❌       |      👁️ View      |
+| Fuel & Expenses |    ✅ Full    |     ❌     |       ❌       |      ✅ Full      |
+| Analytics       |    ✅ Full    |     ❌     |       ❌       |      ✅ Full      |
+| Settings        |    ✅ Full    |     ❌     |       ❌       |        ❌         |
 
 ---
 
@@ -238,11 +245,11 @@ VITE_USE_MOCKS=false
 
 All accounts use password `admin123`.
 
-| Role | Email | Access |
-|---|---|---|
-| Fleet Manager | ravi.kumar@transitops.in | Everything |
-| Dispatcher | ajay.singh@transitops.in | Dashboard + Trips |
-| Safety Officer | priya.nair@transitops.in | Drivers + Trips (view) |
+| Role              | Email                    | Access                          |
+| ----------------- | ------------------------ | ------------------------------- |
+| Fleet Manager     | ravi.kumar@transitops.in | Everything                      |
+| Dispatcher        | ajay.singh@transitops.in | Dashboard + Trips               |
+| Safety Officer    | priya.nair@transitops.in | Drivers + Trips (view)          |
 | Financial Analyst | deepa.shah@transitops.in | Fleet (view) + Fuel + Analytics |
 
 ---
