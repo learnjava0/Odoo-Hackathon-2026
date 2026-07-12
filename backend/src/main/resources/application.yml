@@ -2,8 +2,8 @@ spring:
   application:
     name: TransitOps
   datasource:
-    url: jdbc:postgresql://localhost:5432/transitops
-    username: postgres
+    url: jdbc:postgresql://localhost:5432/transitops_dev
+    username: dev-trivedi
     password: 12345678
     driver-class-name: org.postgresql.Driver
   jpa:
