@@ -1,18 +1,17 @@
 import { Link } from "react-router-dom";
-import PageHeader from "../components/ui/PageHeader";
+import { Button } from "../components/ui/Button";
 
-function ForbiddenPage() {
+export default function ForbiddenPage() {
   return (
-    <div>
-      <PageHeader title="Forbidden" description="Role-based access guard placeholder." />
-      <section className="panel panel-body">
-        <p className="text-sm text-slate-300">You do not have access to this section with the current role.</p>
-        <Link className="mt-4 inline-block text-sm font-medium text-cyan-400" to="/dashboard">
-          Return to dashboard
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6">
+      <div className="panel max-w-xl p-10 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-red-400">403</p>
+        <h1 className="mt-4 text-3xl font-semibold text-slate-100">Access blocked for your current role</h1>
+        <p className="mt-3 text-slate-400">TransitOps hides restricted pages from navigation and routes you here when access is outside your role scope.</p>
+        <Link to="/">
+          <Button className="mt-6">Return to dashboard</Button>
         </Link>
-      </section>
+      </div>
     </div>
   );
 }
-
-export default ForbiddenPage;

@@ -43,6 +43,8 @@ export function currency(value) {
   }).format(value ?? 0);
 }
 
+export const formatCurrency = currency;
+
 export function number(value, digits = 0) {
   return new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(value ?? 0);
 }
