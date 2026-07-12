@@ -9,11 +9,9 @@ import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
 import { Input } from "../components/ui/Input";
 import { Modal } from "../components/ui/Modal";
-import { PageHeader } from "../components/ui/PageHeader";
 import { Select } from "../components/ui/Select";
 import { Skeleton } from "../components/ui/Skeleton";
 import { StatusBadge } from "../components/ui/StatusBadge";
-import { Table } from "../components/ui/Table";
 
 const fuelSchema = z.object({
   vehicleId: z.coerce.number().positive(),
@@ -33,21 +31,10 @@ const expenseSchema = z.object({
 
 export default function FuelExpensesPage() {
   const { vehicles, trips, maintenanceLogs, fuelLogs, expenses, saveFuelLog, saveExpense, loading } = useAppData();
-  const [tab, setTab] = useState("fuel");
   const [fuelOpen, setFuelOpen] = useState(false);
   const [expenseOpen, setExpenseOpen] = useState(false);
   const fuelForm = useForm({ resolver: zodResolver(fuelSchema), defaultValues: { logDate: new Date().toISOString().slice(0, 10) } });
   const expenseForm = useForm({ resolver: zodResolver(expenseSchema), defaultValues: { expenseDate: new Date().toISOString().slice(0, 10) } });
-
-  const rollups = useMemo(
-    () =>
-      vehicles.map((vehicle) => {
-        const fuel = fuelLogs.filter((item) => item.vehicleId === vehicle.id).reduce((sum, item) => sum + item.cost, 0);
-        const maintenance = maintenanceLogs.filter((item) => item.vehicleId === vehicle.id).reduce((sum, item) => sum + item.cost, 0);
-        return { vehicle: vehicle.nameModel, total: fuel + maintenance };
-      }),
-    [fuelLogs, maintenanceLogs, vehicles],
-  );
 
   async function submitFuel(values) {
     await saveFuelLog({ ...values, tripId: values.tripId || null });
@@ -65,73 +52,92 @@ export default function FuelExpensesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        eyebrow="Operating Spend"
-        title="Fuel & Expenses"
-        description="Capture fuel costs and non-fuel spend in one place, with per-vehicle operational cost visibility."
-        actions={
-          <>
-            <Button variant={tab === "fuel" ? "primary" : "secondary"} onClick={() => setTab("fuel")}>Fuel Logs</Button>
-            <Button variant={tab === "expenses" ? "primary" : "secondary"} onClick={() => setTab("expenses")}>Other Expenses</Button>
-          </>
-        }
-      />
-      <Card className="space-y-4">
-        <div className="flex justify-end gap-3">
-          {tab === "fuel" ? <Button onClick={() => setFuelOpen(true)}>+ Log Fuel</Button> : <Button onClick={() => setExpenseOpen(true)}>+ Add Expense</Button>}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-amber-600 dark:text-amber-500">Operating Spend</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-950 dark:text-slate-100">Fuel & Expenses</h1>
         </div>
-        {tab === "fuel" ? (
-          fuelLogs.length ? (
-            <Table
-              columns={[
-                { key: "vehicle", label: "Vehicle" },
-                { key: "date", label: "Date" },
-                { key: "liters", label: "Liters" },
-                { key: "cost", label: "Cost" },
-              ]}
-              rows={fuelLogs}
-              renderRow={(log) => (
-                <tr key={log.id}>
-                  <td className="px-4 py-3">{vehicles.find((vehicle) => vehicle.id === log.vehicleId)?.nameModel}</td>
-                  <td className="px-4 py-3 text-slate-600">{log.logDate}</td>
-                  <td className="px-4 py-3">{log.liters}</td>
-                  <td className="px-4 py-3">{currency(log.cost)}</td>
-                </tr>
-              )}
-            />
+        <div className="flex gap-2">
+          <Button onClick={() => setFuelOpen(true)}>+ Log Fuel</Button>
+          <Button variant="secondary" onClick={() => setExpenseOpen(true)}>+ Add Expense</Button>
+        </div>
+      </div>
+      <Card className="space-y-6">
+        {/* Fuel Logs */}
+        <div>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Fuel Logs</h2>
+          {fuelLogs.length ? (
+            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+              <table className="min-w-full text-sm">
+                <thead className="bg-slate-50 dark:bg-ink-950">
+                  <tr className="border-b border-slate-200 dark:border-slate-800">
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider dark:text-slate-400">Vehicle</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider dark:text-slate-400">Date</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider dark:text-slate-400">Liters</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider dark:text-slate-400">Cost</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-ink-900">
+                  {fuelLogs.map((log) => (
+                    <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-ink-850">
+                      <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{vehicles.find((v) => v.id === log.vehicleId)?.nameModel ?? "—"}</td>
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{log.logDate}</td>
+                      <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{log.liters} L</td>
+                      <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{currency(log.cost)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
             <EmptyState title="No fuel logs yet" description="Start by logging a refuel event for any active vehicle." />
-          )
-        ) : expenses.length ? (
-          <Table
-            columns={[
-              { key: "vehicle", label: "Vehicle" },
-              { key: "description", label: "Description" },
-              { key: "amount", label: "Amount" },
-              { key: "trip", label: "Linked Trip" },
-              { key: "status", label: "Status" },
-            ]}
-            rows={expenses}
-            renderRow={(expense) => (
-              <tr key={expense.id}>
-                <td className="px-4 py-3">{vehicles.find((vehicle) => vehicle.id === expense.vehicleId)?.nameModel}</td>
-                <td className="px-4 py-3">{expense.description}</td>
-                <td className="px-4 py-3">{currency(expense.amount)}</td>
-                <td className="px-4 py-3 text-slate-600">#{expense.tripId ?? "-"}</td>
-                <td className="px-4 py-3"><StatusBadge value={expense.tripId ? "COMPLETED" : "DRAFT"} /></td>
-              </tr>
-            )}
-          />
-        ) : (
-          <EmptyState title="No expenses yet" description="Start tracking tolls, parking, and other operating spend." />
-        )}
-        <div className="grid gap-3 md:grid-cols-3">
-          {rollups.map((item) => (
-            <div key={item.vehicle} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <p className="text-sm text-slate-600">{item.vehicle}</p>
-              <p className="mt-2 text-lg font-semibold text-amber-600">Total Operational Cost: {currency(item.total)}</p>
+          )}
+        </div>
+
+        {/* Other Expenses */}
+        <div>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Other Expenses (Toll / Misc)</h2>
+          {expenses.length ? (
+            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+              <table className="min-w-full text-sm">
+                <thead className="bg-slate-50 dark:bg-ink-950">
+                  <tr className="border-b border-slate-200 dark:border-slate-800">
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider dark:text-slate-400">Trip</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider dark:text-slate-400">Vehicle</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider dark:text-slate-400">Description</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider dark:text-slate-400">Amount</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider dark:text-slate-400">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-ink-900">
+                  {expenses.map((expense) => (
+                    <tr key={expense.id} className="hover:bg-slate-50 dark:hover:bg-ink-850">
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400">#{expense.tripId ?? "—"}</td>
+                      <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{vehicles.find((v) => v.id === expense.vehicleId)?.nameModel ?? "—"}</td>
+                      <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{expense.description}</td>
+                      <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{currency(expense.amount)}</td>
+                      <td className="px-4 py-3"><StatusBadge value={expense.tripId ? "COMPLETED" : "DRAFT"} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          ))}
+          ) : (
+            <EmptyState title="No expenses yet" description="Start tracking tolls, parking, and other operating spend." />
+          )}
+        </div>
+
+        {/* Total operational cost footer */}
+        <div className="border-t border-slate-200 pt-4 dark:border-slate-800">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-slate-600 dark:text-slate-400">Total Operational Cost (Auto) = Fuel + Maintenance</p>
+            <p className="text-base font-semibold text-amber-600">
+              {currency(
+                fuelLogs.reduce((s, l) => s + l.cost, 0) +
+                expenses.reduce((s, e) => s + e.amount, 0)
+              )}
+            </p>
+          </div>
         </div>
       </Card>
       <Modal open={fuelOpen} title="Log Fuel" onClose={() => setFuelOpen(false)}>

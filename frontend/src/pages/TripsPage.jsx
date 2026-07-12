@@ -85,101 +85,111 @@ export default function TripsPage() {
   return (
     <div className="space-y-6">
       <PageHeader eyebrow="Dispatch Board" title="Trips" description="Create trip drafts, dispatch only eligible assets, and complete or cancel movements with immediate status updates." />
-      <div className="grid gap-6 xl:grid-cols-[0.92fr_1.08fr]">
+      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <Card>
-          <div className="mb-5 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-600">Step 1 of 2</p>
-              <h2 className="mt-2 text-xl font-semibold text-slate-950">Create Trip</h2>
+          {/* Trip lifecycle stepper */}
+          <div className="mb-5">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Trip Lifecycle</p>
+            <div className="flex items-center gap-1">
+              {["Draft", "Dispatched", "Completed", "Cancelled"].map((step, i) => (
+                <div key={step} className="flex items-center gap-1">
+                  <div className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
+                    i === 0 ? "bg-emerald-500 text-white" : i === 1 ? "bg-sky-500 text-white" : "border border-slate-300 text-slate-400 dark:border-slate-600"
+                  }`}>{i + 1}</div>
+                  <span className={`text-xs ${i < 2 ? "font-semibold text-slate-800 dark:text-slate-200" : "text-slate-400 dark:text-slate-500"}`}>{step}</span>
+                  {i < 3 && <span className="mx-1 text-slate-300 dark:text-slate-600">→</span>}
+                </div>
+              ))}
             </div>
-            <div className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-600">Draft before dispatch</div>
+          </div>
+          <div className="mb-5">
+            <h2 className="text-base font-semibold text-slate-950 dark:text-slate-100">Create Trip</h2>
           </div>
           <form className="space-y-4" onSubmit={tripForm.handleSubmit(onCreateTrip)}>
-            <Input label="Source" error={tripForm.formState.errors.source?.message} {...tripForm.register("source")} />
-            <Input label="Destination" error={tripForm.formState.errors.destination?.message} {...tripForm.register("destination")} />
-            <Select label="Vehicle" error={tripForm.formState.errors.vehicleId?.message} {...tripForm.register("vehicleId")}>
+            <Input label="Source" placeholder="Origin depot or location" error={tripForm.formState.errors.source?.message} {...tripForm.register("source")} />
+            <Input label="Destination" placeholder="Delivery hub or endpoint" error={tripForm.formState.errors.destination?.message} {...tripForm.register("destination")} />
+            <Select label="Vehicle (Available only)" error={tripForm.formState.errors.vehicleId?.message} {...tripForm.register("vehicleId")}>
               <option value="">Select available vehicle</option>
               {allowedVehicles.map((vehicle) => (
-                <option key={vehicle.id} value={vehicle.id}>{vehicle.nameModel} | {vehicle.registrationNumber}</option>
+                <option key={vehicle.id} value={vehicle.id}>{vehicle.nameModel} — {vehicle.registrationNumber}</option>
               ))}
             </Select>
             <Select
               label="Driver"
-              helperText="Expired-license and suspended drivers are removed from the picker."
+              helperText="Expired-license and suspended drivers are excluded."
               error={tripForm.formState.errors.driverId?.message}
               {...tripForm.register("driverId")}
             >
               <option value="">Select available driver</option>
               {allowedDrivers.map((driver) => (
-                <option key={driver.id} value={driver.id}>{driver.name} | {formatDate(driver.licenseExpiryDate)}</option>
+                <option key={driver.id} value={driver.id}>{driver.name}</option>
               ))}
             </Select>
             <div className="grid gap-4 md:grid-cols-2">
               <Input label="Cargo Weight (kg)" type="number" error={tripForm.formState.errors.cargoWeight?.message} {...tripForm.register("cargoWeight")} />
               <Input label="Planned Distance (km)" type="number" error={tripForm.formState.errors.plannedDistance?.message} {...tripForm.register("plannedDistance")} />
             </div>
-            {capacityError ? <p className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{capacityError}</p> : null}
-            <Button type="submit" loading={tripForm.formState.isSubmitting} disabled={Boolean(capacityError)}>
-              Save Draft
-            </Button>
+            {selectedVehicle && (
+              <div className={`rounded-xl border px-4 py-3 text-sm ${capacityError ? "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30" : "border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-ink-850"}`}>
+                <p className="text-slate-600 dark:text-slate-400">Vehicle Capacity: <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedVehicle.maxLoadCapacity} kg</span></p>
+                <p className="text-slate-600 dark:text-slate-400">Cargo Weight: <span className="font-semibold text-slate-800 dark:text-slate-200">{cargoWeight} kg</span></p>
+                {capacityError && <p className="mt-1 flex items-center gap-1 font-medium text-red-600 dark:text-red-400"><span>✕</span> {capacityError}</p>}
+              </div>
+            )}
+            <div className="flex gap-3">
+              <Button type="submit" loading={tripForm.formState.isSubmitting} disabled={Boolean(capacityError)}>
+                Dispatch (Draft)
+              </Button>
+              <Button type="button" variant="ghost" onClick={() => tripForm.reset({ source: "", destination: "", cargoWeight: 0, plannedDistance: 0, vehicleId: "", driverId: "" })}>
+                Cancel
+              </Button>
+            </div>
           </form>
         </Card>
         <Card>
           <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-slate-950">Live Board</h2>
-            <p className="text-sm text-slate-500">{visibleTrips.length} trips</p>
+            <h2 className="text-base font-semibold text-slate-950 dark:text-slate-100">Live Board</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{visibleTrips.length} trips</p>
           </div>
           {visibleTrips.length ? (
-            <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-4">
-              {columns.map((status) => (
-                <div key={status} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <div className="mb-3 flex items-center justify-between">
-                    <h3 className="font-semibold text-slate-800">{status}</h3>
-                    <span className="text-xs text-slate-500">{visibleTrips.filter((trip) => trip.status === status).length}</span>
-                  </div>
-                  <div className="space-y-3">
-                    {visibleTrips.filter((trip) => trip.status === status).map((trip) => {
+            <div className="space-y-3">
+              {visibleTrips.map((trip) => {
                       const tripVehicle = vehicles.find((vehicle) => vehicle.id === trip.vehicleId);
                       const tripDriver = drivers.find((driver) => driver.id === trip.driverId);
                       const canDispatch = access !== "view" && ["FLEET_MANAGER", "DRIVER"].includes(user.role) && trip.status === "DRAFT";
                       const canComplete = access !== "view" && trip.status === "DISPATCHED";
                       const canCancel = access !== "view" && ["DRAFT", "DISPATCHED"].includes(trip.status);
                       return (
-                        <div key={trip.id} className="rounded-lg border border-slate-200 bg-white p-4">
+                        <div key={trip.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-ink-850">
                           <div className="flex items-start justify-between gap-3">
                             <div>
-                              <p className="font-medium text-slate-950">{trip.source} to {trip.destination}</p>
-                              <p className="mt-1 text-xs text-slate-500">{tripVehicle?.nameModel} | {tripDriver?.name}</p>
+                              <p className="font-semibold text-slate-950 dark:text-slate-100">{trip.source} → {trip.destination}</p>
+                              <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                                {tripVehicle?.nameModel ?? "No vehicle"} / {tripDriver?.name ?? "No driver"}
+                              </p>
                             </div>
                             <StatusBadge value={trip.status} />
                           </div>
-                          <p className="mt-3 text-sm text-slate-600">{trip.cargoWeight} kg | {trip.plannedDistance} km</p>
-                          <div className="mt-4 flex flex-wrap gap-2">
-                            {canDispatch ? <Button variant="primary" className="px-3 py-2" onClick={() => dispatchTrip(trip.id)}>Dispatch</Button> : null}
-                            {canComplete ? (
-                              <Button
-                                variant="secondary"
-                                className="px-3 py-2"
-                                onClick={() => {
-                                  setActiveTrip(trip);
-                                  setCompleteOpen(true);
-                                }}
-                              >
-                                Complete
-                              </Button>
-                            ) : null}
-                            {canCancel ? (
-                              <Button variant="danger" className="px-3 py-2" onClick={() => cancelTrip(trip.id)}>
-                                Cancel
-                              </Button>
-                            ) : null}
-                          </div>
+                          {trip.status === "DRAFT" && !tripDriver && (
+                            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">Awaiting driver assignment</p>
+                          )}
+                          {trip.status === "CANCELLED" && (
+                            <p className="mt-2 text-xs text-red-500">Vehicle not ready to ship</p>
+                          )}
+                          {(canDispatch || canComplete || canCancel) && (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {canDispatch && <Button variant="primary" className="px-3 py-1.5 text-xs" onClick={() => dispatchTrip(trip.id)}>Dispatch</Button>}
+                              {canComplete && (
+                                <Button variant="secondary" className="px-3 py-1.5 text-xs" onClick={() => { setActiveTrip(trip); setCompleteOpen(true); }}>
+                                  Complete
+                                </Button>
+                              )}
+                              {canCancel && <Button variant="danger" className="px-3 py-1.5 text-xs" onClick={() => cancelTrip(trip.id)}>Cancel</Button>}
+                            </div>
+                          )}
                         </div>
                       );
                     })}
-                  </div>
-                </div>
-              ))}
             </div>
           ) : (
             <EmptyState title="No trips available" description="Trips will appear here once drafts or dispatch activity exist for your role scope." />

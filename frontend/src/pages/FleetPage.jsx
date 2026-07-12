@@ -104,48 +104,52 @@ export default function FleetPage() {
         eyebrow="Vehicle Registry"
         title="Fleet"
         description="Track core fleet assets, view operating history, and keep dispatch-eligible vehicles cleanly separated from retired or in-shop units."
-        actions={access === "full" ? <Button onClick={openCreate}>+ Add Vehicle</Button> : null}
       />
       <Card className="space-y-4">
-        <div className="grid gap-4 md:grid-cols-4">
-          <Input placeholder="Search by reg no. or model" value={filters.search} onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))} />
+        <div className="flex flex-wrap items-center gap-3">
           <Select value={filters.type} onChange={(event) => setFilters((prev) => ({ ...prev, type: event.target.value }))}>
-            <option value="ALL">All types</option>
+            <option value="ALL">Type: All</option>
             {[...new Set(vehicles.map((vehicle) => vehicle.type))].map((type) => <option key={type}>{type}</option>)}
           </Select>
           <Select value={filters.status} onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value }))}>
-            <option value="ALL">All statuses</option>
+            <option value="ALL">Status: All</option>
             {["AVAILABLE", "ON_TRIP", "IN_SHOP", "RETIRED"].map((status) => <option key={status}>{status}</option>)}
           </Select>
+          <div className="flex-1 min-w-40">
+            <Input placeholder="Search by reg no." value={filters.search} onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))} />
+          </div>
+          {access === "full" && (
+            <Button onClick={openCreate} className="ml-auto">+ Add Vehicle</Button>
+          )}
         </div>
         {rows.length ? (
           <Table
             columns={[
-              { key: "registrationNumber", label: "Registration Number", sortable: true },
+              { key: "registrationNumber", label: "Reg. No. (Unique)", sortable: true },
               { key: "nameModel", label: "Name/Model", sortable: true },
               { key: "type", label: "Type", sortable: true },
-              { key: "maxLoadCapacity", label: "Max Load Capacity", sortable: true },
+              { key: "maxLoadCapacity", label: "Capacity", sortable: true },
               { key: "odometer", label: "Odometer", sortable: true },
-              { key: "acquisitionCost", label: "Acquisition Cost", sortable: true },
+              { key: "acquisitionCost", label: "Acq. Cost", sortable: true },
               { key: "status", label: "Status", sortable: true },
-              { key: "actions", label: "Actions" },
+              { key: "actions", label: "" },
             ]}
             rows={rows}
             sort={sort}
             onSort={(key) => setSort((prev) => ({ key, direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc" }))}
             renderRow={(vehicle) => (
-              <tr key={vehicle.id} className="bg-white hover:bg-slate-50 dark:bg-ink-900 dark:hover:bg-ink-850">
-                <td className="px-4 py-3">{vehicle.registrationNumber}</td>
-                <td className="px-4 py-3">{vehicle.nameModel}</td>
+              <tr key={vehicle.id} className="hover:bg-slate-50 dark:hover:bg-ink-850">
+                <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{vehicle.registrationNumber}</td>
+                <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{vehicle.nameModel}</td>
                 <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{vehicle.type}</td>
-                <td className="px-4 py-3">{number(vehicle.maxLoadCapacity)} kg</td>
-                <td className="px-4 py-3">{number(vehicle.odometer)} km</td>
-                <td className="px-4 py-3">{currency(vehicle.acquisitionCost)}</td>
+                <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{number(vehicle.maxLoadCapacity)} kg</td>
+                <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{number(vehicle.odometer)} km</td>
+                <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{currency(vehicle.acquisitionCost)}</td>
                 <td className="px-4 py-3"><StatusBadge value={vehicle.status} /></td>
                 <td className="px-4 py-3">
                   <div className="flex gap-2">
-                    <Button variant="ghost" className="px-3 py-2" onClick={() => setDetail(vehicle)}>View</Button>
-                    {access === "full" ? <Button variant="secondary" className="px-3 py-2" onClick={() => openEdit(vehicle)}>Edit</Button> : null}
+                    <Button variant="ghost" className="px-3 py-1.5 text-xs" onClick={() => setDetail(vehicle)}>View</Button>
+                    {access === "full" ? <Button variant="secondary" className="px-3 py-1.5 text-xs" onClick={() => openEdit(vehicle)}>Edit</Button> : null}
                   </div>
                 </td>
               </tr>
@@ -154,8 +158,8 @@ export default function FleetPage() {
         ) : (
           <EmptyState title="No vehicles found" description="Try widening your search or filters to bring vehicles back into the registry table." />
         )}
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          Registration number must be unique. Retired/In Shop vehicles are hidden from Trip Dispatcher.
+        <p className="text-xs text-red-500 dark:text-red-400">
+          Note: Registration No. must be unique. Retired/In Shop vehicles are hidden from Trip Dispatcher.
         </p>
       </Card>
       <Modal open={modalOpen} title={editing ? "Edit Vehicle" : "Add Vehicle"} onClose={() => setModalOpen(false)}>

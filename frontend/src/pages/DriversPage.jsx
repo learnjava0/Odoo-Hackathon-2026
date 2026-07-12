@@ -79,8 +79,10 @@ export default function DriversPage() {
         actions={access === "full" ? <Button onClick={openCreate}>+ Add Driver</Button> : null}
       />
       <Card className="space-y-4">
-        <div className="grid gap-4 md:grid-cols-4">
-          <Input placeholder="Search by name or license no." value={filters.search} onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))} />
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex-1 min-w-48">
+            <Input placeholder="Search by name or license no." value={filters.search} onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))} />
+          </div>
           <Select value={filters.status} onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value }))}>
             <option value="ALL">All statuses</option>
             {["AVAILABLE", "ON_TRIP", "OFF_DUTY", "SUSPENDED"].map((status) => <option key={status}>{status}</option>)}
@@ -89,33 +91,36 @@ export default function DriversPage() {
         {rows.length ? (
           <Table
             columns={[
-              { key: "name", label: "Name" },
-              { key: "licenseNumber", label: "License Number" },
-              { key: "licenseCategory", label: "License Category" },
-              { key: "licenseExpiryDate", label: "License Expiry Date" },
-              { key: "contactNumber", label: "Contact Number" },
-              { key: "safetyScore", label: "Safety Score" },
+              { key: "name", label: "Driver" },
+              { key: "licenseNumber", label: "License No." },
+              { key: "licenseCategory", label: "Category" },
+              { key: "licenseExpiryDate", label: "Expiry" },
+              { key: "contactNumber", label: "Contact" },
+              { key: "safetyScore", label: "Trip Comp." },
+              { key: "driverStatus", label: "Safety" },
               { key: "status", label: "Status" },
-              { key: "actions", label: "Actions" },
+              { key: "actions", label: "" },
             ]}
             rows={rows}
             renderRow={(driver) => {
               const license = getLicenseState(driver.licenseExpiryDate);
               return (
-                <tr key={driver.id}>
-                  <td className="px-4 py-3">{driver.name}</td>
-                  <td className="px-4 py-3">{driver.licenseNumber}</td>
-                  <td className="px-4 py-3">{driver.licenseCategory}</td>
-                  <td className={`px-4 py-3 ${license.tone === "red" ? "text-red-600" : license.tone === "amber" ? "text-amber-600" : "text-slate-700"}`}>
+                <tr key={driver.id} className="hover:bg-slate-50 dark:hover:bg-ink-850">
+                  <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{driver.name}</td>
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{driver.licenseNumber}</td>
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{driver.licenseCategory}</td>
+                  <td className={`px-4 py-3 font-medium ${license.tone === "red" ? "text-red-600" : license.tone === "amber" ? "text-amber-600" : "text-slate-700 dark:text-slate-300"}`}>
                     {formatDate(driver.licenseExpiryDate)}
+                    {license.tone === "red" && <span className="ml-2 text-xs font-bold text-red-600">EXPIRED</span>}
                   </td>
-                  <td className="px-4 py-3 text-slate-600">{driver.contactNumber}</td>
-                  <td className="px-4 py-3">{driver.safetyScore}</td>
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{driver.contactNumber}</td>
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{driver.safetyScore}%</td>
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{driver.safetyScore}%</td>
                   <td className="px-4 py-3"><StatusBadge value={driver.status} /></td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
-                      <Button variant="ghost" className="px-3 py-2" onClick={() => setDetail(driver)}>View</Button>
-                      {access === "full" ? <Button variant="secondary" className="px-3 py-2" onClick={() => openEdit(driver)}>Edit</Button> : null}
+                      <Button variant="ghost" className="px-3 py-1.5 text-xs" onClick={() => setDetail(driver)}>View</Button>
+                      {access === "full" ? <Button variant="secondary" className="px-3 py-1.5 text-xs" onClick={() => openEdit(driver)}>Edit</Button> : null}
                     </div>
                   </td>
                 </tr>
@@ -125,6 +130,13 @@ export default function DriversPage() {
         ) : (
           <EmptyState title="No drivers found" description="Adjust the table filters or add a new driver profile." />
         )}
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <span className="text-xs text-slate-500 dark:text-slate-400">Toggle Status:</span>
+          {["AVAILABLE", "ON_TRIP", "OFF_DUTY", "SUSPENDED"].map((s) => (
+            <StatusBadge key={s} value={s} />
+          ))}
+          <span className="ml-2 text-xs text-red-500">Note: Expired license or Suspended status — blocked from Trip assignment</span>
+        </div>
       </Card>
       <Modal open={modalOpen} title={editing ? "Edit Driver" : "Add Driver"} onClose={() => setModalOpen(false)}>
         <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>

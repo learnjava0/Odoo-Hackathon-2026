@@ -19,7 +19,6 @@ import { useAppData } from "../context/AppDataContext";
 import { getFleetUtilization, currency, number } from "../utils/calculations";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
-import { PageHeader } from "../components/ui/PageHeader";
 import { Skeleton } from "../components/ui/Skeleton";
 import { StatCard } from "../components/ui/StatCard";
 import { StatusBadge } from "../components/ui/StatusBadge";
@@ -69,66 +68,93 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Operations Overview" title="Dashboard" description="Watch live fleet status, recent dispatch activity, and the metrics that matter most to operations." />
-      <Card className="grid gap-4 md:grid-cols-3 xl:grid-cols-4">
-        <select className="input-base" value={filters.type} onChange={(event) => setFilters((prev) => ({ ...prev, type: event.target.value }))}>
-          <option value="ALL">All vehicle types</option>
-          {[...new Set(vehicles.map((vehicle) => vehicle.type))].map((type) => <option key={type}>{type}</option>)}
-        </select>
-        <select className="input-base" value={filters.status} onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value }))}>
-          <option value="ALL">All trip statuses</option>
-          {["DRAFT", "DISPATCHED", "COMPLETED", "CANCELLED"].map((status) => <option key={status}>{status}</option>)}
-        </select>
-        <select className="input-base" value={filters.region} onChange={(event) => setFilters((prev) => ({ ...prev, region: event.target.value }))}>
-          <option value="ALL">All regions</option>
-          {["Dallas", "Seattle", "Miami", "Houston", "Boston"].map((region) => <option key={region}>{region}</option>)}
-        </select>
-      </Card>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-7">
-        <StatCard label="Active Vehicles" value={number(vehicles.filter((item) => item.status !== "RETIRED").length)} />
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-amber-600 dark:text-amber-500">Operations Overview</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-950 dark:text-slate-100">Dashboard</h1>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">FILTERS</span>
+          <select className="input-base w-auto" value={filters.type} onChange={(event) => setFilters((prev) => ({ ...prev, type: event.target.value }))}>
+            <option value="ALL">Vehicle Type: All</option>
+            {[...new Set(vehicles.map((vehicle) => vehicle.type))].map((type) => <option key={type}>{type}</option>)}
+          </select>
+          <select className="input-base w-auto" value={filters.status} onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value }))}>
+            <option value="ALL">Status: All</option>
+            {["DRAFT", "DISPATCHED", "COMPLETED", "CANCELLED"].map((status) => <option key={status}>{status}</option>)}
+          </select>
+          <select className="input-base w-auto" value={filters.region} onChange={(event) => setFilters((prev) => ({ ...prev, region: event.target.value }))}>
+            <option value="ALL">Region: All</option>
+            {["Dallas", "Seattle", "Miami", "Houston", "Boston"].map((region) => <option key={region}>{region}</option>)}
+          </select>
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-4 xl:grid-cols-7">
+        <StatCard label="Active Vehicles" value={number(vehicles.filter((item) => item.status !== "RETIRED").length)} accent="text-slate-950 dark:text-slate-100" />
         <StatCard label="Available Vehicles" value={number(vehicles.filter((item) => item.status === "AVAILABLE").length)} accent="text-emerald-600" />
         <StatCard label="Vehicles in Maintenance" value={number(vehicles.filter((item) => item.status === "IN_SHOP").length)} accent="text-amber-600" />
         <StatCard label="Active Trips" value={number(filteredTrips.filter((item) => item.status === "DISPATCHED").length)} accent="text-sky-600" />
-        <StatCard label="Pending Trips" value={number(filteredTrips.filter((item) => item.status === "DRAFT").length)} />
-        <StatCard label="Drivers On Duty" value={number(drivers.filter((item) => item.status === "ON_TRIP").length)} />
+        <StatCard label="Pending Trips" value={number(filteredTrips.filter((item) => item.status === "DRAFT").length)} accent="text-slate-950 dark:text-slate-100" />
+        <StatCard label="Drivers On Duty" value={number(drivers.filter((item) => item.status === "ON_TRIP").length)} accent="text-slate-950 dark:text-slate-100" />
         <StatCard label="Fleet Utilization" value={`${number(getFleetUtilization(vehicles, trips), 1)}%`} accent="text-amber-600" />
       </div>
-      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.4fr_0.6fr]">
         <Card>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-950">Recent Trips</h2>
-            <p className="text-sm text-slate-500">{filteredTrips.length} visible</p>
+            <h2 className="text-base font-semibold text-slate-950 dark:text-slate-100">Recent Trips</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{filteredTrips.length} visible</p>
           </div>
           {filteredTrips.length ? (
-            <div className="space-y-3">
-              {filteredTrips.slice(0, 8).map((trip) => (
-                <div key={trip.id} className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="font-medium text-slate-950">{trip.source} to {trip.destination}</p>
-                    <p className="text-sm text-slate-500">{number(trip.cargoWeight)} kg cargo | {number(trip.plannedDistance)} km</p>
-                  </div>
-                  <StatusBadge value={trip.status} />
-                </div>
-              ))}
+            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+              <table className="min-w-full text-sm">
+                <thead className="bg-slate-50 dark:bg-ink-950">
+                  <tr className="border-b border-slate-200 dark:border-slate-800">
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Trip</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Vehicle</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Driver</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                    <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">ETA</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-ink-900">
+                  {filteredTrips.slice(0, 8).map((trip) => {
+                    const tripVehicle = vehicles.find((v) => v.id === trip.vehicleId);
+                    const tripDriver = drivers.find((d) => d.id === trip.driverId);
+                    return (
+                      <tr key={trip.id} className="hover:bg-slate-50 dark:hover:bg-ink-850">
+                        <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{trip.source} → {trip.destination}</td>
+                        <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{tripVehicle?.nameModel ?? "—"}</td>
+                        <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{tripDriver?.name ?? "—"}</td>
+                        <td className="px-4 py-3"><StatusBadge value={trip.status} /></td>
+                        <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-xs">{trip.status === "DISPATCHED" ? `${trip.plannedDistance} km` : "—"}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           ) : (
             <EmptyState title="No trips match the current filters" description="Adjust the dashboard filter bar to bring trips back into view." />
           )}
         </Card>
         <Card>
-          <h2 className="mb-5 text-lg font-semibold text-slate-950">Vehicle Status</h2>
-          <div className="overflow-hidden rounded-full bg-slate-100">
-            <div className="flex h-5">
-              {statusBreakdown.map((segment) => (
-                <div key={segment.name} style={{ width: `${(segment.value / Math.max(vehicles.length, 1)) * 100}%`, backgroundColor: segment.color }} />
-              ))}
-            </div>
-          </div>
-          <div className="mt-4 grid gap-3">
+          <h2 className="mb-4 text-base font-semibold text-slate-950 dark:text-slate-100">Vehicle Status</h2>
+          <div className="space-y-3">
             {statusBreakdown.map((segment) => (
-              <div key={segment.name} className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: segment.color }} />{segment.name}</div>
-                <span className="text-slate-600">{segment.value}</span>
+              <div key={segment.name}>
+                <div className="mb-1.5 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: segment.color }} />
+                    <span className="text-slate-700 dark:text-slate-300">{segment.name}</span>
+                  </div>
+                  <span className="text-slate-500 dark:text-slate-400">{segment.value}</span>
+                </div>
+                <div className="h-3 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${(segment.value / Math.max(vehicles.length, 1)) * 100}%`, backgroundColor: segment.color }}
+                  />
+                </div>
               </div>
             ))}
           </div>

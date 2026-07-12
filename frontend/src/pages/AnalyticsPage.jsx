@@ -10,16 +10,14 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Download, FileText, Info } from "lucide-react";
+import { Download, FileText } from "lucide-react";
 import { useAppData } from "../context/AppDataContext";
 import { exportToCsv } from "../utils/csvExport";
 import { currency, getFleetUtilization, getFuelEfficiencyForVehicle, getVehicleRoi } from "../utils/calculations";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
-import { PageHeader } from "../components/ui/PageHeader";
 import { Skeleton } from "../components/ui/Skeleton";
 import { StatCard } from "../components/ui/StatCard";
-import { Table } from "../components/ui/Table";
 
 export default function AnalyticsPage() {
   const { vehicles, trips, fuelLogs, maintenanceLogs, expenses, loading } = useAppData();
@@ -56,21 +54,21 @@ export default function AnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        eyebrow="Performance Reporting"
-        title="Analytics"
-        description="Track efficiency, utilization, and asset returns. Revenue is estimated from completed trips using a mocked per-kilometer proxy for demo mode."
-        actions={
-          <>
-            <Button variant="secondary" onClick={() => exportToCsv("fuel-efficiency.csv", fuelEfficiencyRows)}>
-              <Download className="h-4 w-4" /> Export CSV
-            </Button>
-            <Button variant="ghost" disabled title="Coming soon">
-              <FileText className="h-4 w-4" /> PDF Export
-            </Button>
-          </>
-        }
-      />
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-amber-600 dark:text-amber-500">Performance Reporting</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-950 dark:text-slate-100">Reports & Analytics</h1>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">ROI = Revenue − Maintenance − Fuel / Acquisition Cost</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={() => exportToCsv("fuel-efficiency.csv", fuelEfficiencyRows)}>
+            <Download className="h-4 w-4" /> Export CSV
+          </Button>
+          <Button variant="ghost" disabled title="Coming soon">
+            <FileText className="h-4 w-4" /> PDF Export
+          </Button>
+        </div>
+      </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Fuel Efficiency" value={`${fuelEfficiencyRows[0]?.efficiency ?? "0.00"} km/l`} />
         <StatCard label="Fleet Utilization" value={`${getFleetUtilization(vehicles, trips).toFixed(1)}%`} accent="text-sky-600" />
@@ -78,99 +76,103 @@ export default function AnalyticsPage() {
         <StatCard label="Vehicle ROI" value={roiRows[0]?.roi ?? "0%"} accent="text-emerald-600" />
       </div>
       <div className="grid gap-6 xl:grid-cols-2">
-        <Card className="h-80">
-          <h2 className="mb-4 text-lg font-semibold text-slate-950">Monthly Breakdown</h2>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={monthlyBreakdown}>
-              <CartesianGrid stroke="#e2e8f0" />
-              <XAxis dataKey="label" stroke="#64748b" />
-              <YAxis stroke="#64748b" />
-              <Tooltip formatter={(value) => currency(value)} />
-              <Bar dataKey="value" fill="#f59e0b" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </Card>
-        <Card className="h-80">
-          <h2 className="mb-4 text-lg font-semibold text-slate-950">Top Cost / Asset Breakdown</h2>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={costPerVehicle} layout="vertical">
-              <CartesianGrid stroke="#e2e8f0" />
-              <XAxis type="number" stroke="#64748b" />
-              <YAxis dataKey="vehicle" type="category" stroke="#64748b" width={80} />
-              <Tooltip formatter={(value) => currency(value)} />
-              <Bar dataKey="value" fill="#38bdf8" radius={[0, 8, 8, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </Card>
-      </div>
-      <div className="grid gap-6 xl:grid-cols-2">
-        <Card className="h-80">
-          <div className="mb-4 flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-slate-950">Operational Cost Breakdown</h2>
-            <div className="text-slate-500"><Info className="h-4 w-4" /></div>
+        <Card>
+          <h2 className="mb-4 text-base font-semibold text-slate-950 dark:text-slate-100">Monthly Revenue</h2>
+          <div className="h-52">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={monthlyBreakdown} barCategoryGap="30%">
+                <CartesianGrid stroke="#e2e8f0" vertical={false} />
+                <XAxis dataKey="label" stroke="#94a3b8" tick={{ fontSize: 11 }} />
+                <YAxis stroke="#94a3b8" tick={{ fontSize: 11 }} />
+                <Tooltip formatter={(value) => currency(value)} />
+                <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie data={operationalRows} dataKey="amount" nameKey="category" innerRadius={60} outerRadius={92}>
-                {["#f59e0b", "#fb7185", "#38bdf8"].map((color) => <Cell key={color} fill={color} />)}
-              </Pie>
-              <Tooltip formatter={(value) => currency(value)} />
-            </PieChart>
-          </ResponsiveContainer>
         </Card>
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-950">Fuel Efficiency by Vehicle</h2>
-          <Table
-            columns={[{ key: "vehicle", label: "Vehicle" }, { key: "efficiency", label: "Distance / Fuel" }]}
-            rows={fuelEfficiencyRows}
-            renderRow={(row) => (
-              <tr key={row.vehicle}>
-                <td className="px-4 py-3">{row.vehicle}</td>
-                <td className="px-4 py-3">{row.efficiency} km/l</td>
-              </tr>
-            )}
-          />
+          <h2 className="mb-4 text-base font-semibold text-slate-950 dark:text-slate-100">Top Cost / Fleet Vehicles</h2>
+          <div className="space-y-3">
+            {costPerVehicle.sort((a, b) => b.value - a.value).slice(0, 5).map((item, i) => {
+              const maxVal = Math.max(...costPerVehicle.map((c) => c.value), 1);
+              const barColors = ["#ef4444", "#f97316", "#3b82f6", "#22c55e", "#a855f7"];
+              return (
+                <div key={item.vehicle}>
+                  <div className="mb-1 flex items-center justify-between text-xs">
+                    <span className="font-medium text-slate-700 dark:text-slate-300">{item.vehicle}</span>
+                    <span className="text-slate-500 dark:text-slate-400">{currency(item.value)}</span>
+                  </div>
+                  <div className="h-3 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(item.value / maxVal) * 100}%`, backgroundColor: barColors[i] }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </Card>
       </div>
       <div className="grid gap-6 xl:grid-cols-3">
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-950">Fleet Utilization Over Time</h2>
-          <Table
-            columns={[{ key: "vehicle", label: "Vehicle" }, { key: "utilization", label: "Utilization" }]}
-            rows={utilizationRows}
-            renderRow={(row) => (
-              <tr key={row.vehicle}>
-                <td className="px-4 py-3">{row.vehicle}</td>
-                <td className="px-4 py-3">{row.utilization}</td>
+          <h2 className="mb-4 text-base font-semibold text-slate-950 dark:text-slate-100">Fuel Efficiency</h2>
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200 dark:border-slate-800">
+                <th className="pb-2 text-left text-xs font-medium text-slate-500 dark:text-slate-400">Vehicle</th>
+                <th className="pb-2 text-left text-xs font-medium text-slate-500 dark:text-slate-400">km/l</th>
               </tr>
-            )}
-          />
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {fuelEfficiencyRows.map((row) => (
+                <tr key={row.vehicle}>
+                  <td className="py-2.5 text-slate-800 dark:text-slate-200">{row.vehicle}</td>
+                  <td className="py-2.5 text-slate-600 dark:text-slate-400">{row.efficiency}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </Card>
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-950">Operational Cost Breakdown</h2>
-          <Table
-            columns={[{ key: "category", label: "Category" }, { key: "amount", label: "Amount" }]}
-            rows={operationalRows}
-            renderRow={(row) => (
-              <tr key={row.category}>
-                <td className="px-4 py-3">{row.category}</td>
-                <td className="px-4 py-3">{currency(row.amount)}</td>
-              </tr>
-            )}
-          />
+          <h2 className="mb-4 text-base font-semibold text-slate-950 dark:text-slate-100">Operational Cost</h2>
+          <div className="h-36">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={operationalRows} dataKey="amount" nameKey="category" innerRadius={40} outerRadius={60}>
+                  {["#f59e0b", "#fb7185", "#38bdf8"].map((color) => <Cell key={color} fill={color} />)}
+                </Pie>
+                <Tooltip formatter={(value) => currency(value)} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-2 space-y-1">
+            {operationalRows.map((row, i) => (
+              <div key={row.category} className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: ["#f59e0b","#fb7185","#38bdf8"][i] }} />
+                  <span className="text-slate-600 dark:text-slate-400">{row.category}</span>
+                </div>
+                <span className="font-medium text-slate-800 dark:text-slate-200">{currency(row.amount)}</span>
+              </div>
+            ))}
+          </div>
         </Card>
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-950">Vehicle ROI</h2>
-          <Table
-            columns={[{ key: "vehicle", label: "Vehicle" }, { key: "roi", label: "ROI" }]}
-            rows={roiRows}
-            renderRow={(row) => (
-              <tr key={row.vehicle}>
-                <td className="px-4 py-3">{row.vehicle}</td>
-                <td className="px-4 py-3">{row.roi}</td>
+          <h2 className="mb-4 text-base font-semibold text-slate-950 dark:text-slate-100">Vehicle ROI</h2>
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200 dark:border-slate-800">
+                <th className="pb-2 text-left text-xs font-medium text-slate-500 dark:text-slate-400">Vehicle</th>
+                <th className="pb-2 text-left text-xs font-medium text-slate-500 dark:text-slate-400">ROI</th>
               </tr>
-            )}
-          />
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {roiRows.map((row) => (
+                <tr key={row.vehicle}>
+                  <td className="py-2.5 text-slate-800 dark:text-slate-200">{row.vehicle}</td>
+                  <td className="py-2.5 font-semibold text-emerald-600">{row.roi}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </Card>
       </div>
     </div>
