@@ -1,11 +1,7 @@
+import { PAGE_ACCESS } from "../constants/roles";
 import { useAuth } from "../context/AuthContext";
 
-export function useAccess(allowedRoles) {
+export function useAccess(pageKey) {
   const { user } = useAuth();
-
-  if (!allowedRoles || allowedRoles.length === 0) {
-    return true;
-  }
-
-  return allowedRoles.includes(user?.role);
+  return PAGE_ACCESS[pageKey]?.[user?.role] ?? "none";
 }
