@@ -1,37 +1,47 @@
-import { createContext, useContext, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { login as loginRequest, logout as logoutRequest } from "../api/auth";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { login as loginRequest } from "../api/auth";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const navigate = useNavigate();
-  const [session, setSession] = useState(() => {
-    const stored = localStorage.getItem("transitops-session");
-    return stored ? JSON.parse(stored) : null;
-  });
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem("transitops-session");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setToken(parsed.token);
+      setUser(parsed.user);
+    }
+  }, []);
 
   const value = useMemo(
     () => ({
-      user: session?.user ?? null,
-      isAuthenticated: Boolean(session?.token),
+      token,
+      user,
+      loading,
+      isAuthenticated: Boolean(token && user),
       async login(credentials) {
-        const response = await loginRequest(credentials);
-        setSession(response.data);
-        localStorage.setItem("transitops-session", JSON.stringify(response.data));
-        toast.success(`Welcome back, ${response.data.user.name}`);
-        navigate("/dashboard", { replace: true });
+        setLoading(true);
+        try {
+          const data = await loginRequest(credentials);
+          setToken(data.token);
+          setUser(data.user);
+          sessionStorage.setItem("transitops-session", JSON.stringify(data));
+          return data;
+        } finally {
+          setLoading(false);
+        }
       },
-      async logout() {
-        await logoutRequest();
-        setSession(null);
-        localStorage.removeItem("transitops-session");
-        toast.success("Signed out");
-        navigate("/login", { replace: true });
-      }
+      logout() {
+        setToken(null);
+        setUser(null);
+        sessionStorage.removeItem("transitops-session");
+      },
     }),
-    [navigate, session]
+    [loading, token, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -39,10 +49,8 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-
   if (!context) {
     throw new Error("useAuth must be used within AuthProvider");
   }
-
   return context;
 }
