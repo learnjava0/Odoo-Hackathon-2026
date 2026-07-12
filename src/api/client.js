@@ -1,8 +1,16 @@
 import axios from "axios";
 
-const client = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
-  timeout: 10000
+export const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
-export default client;
+apiClient.interceptors.request.use((config) => {
+  const stored = sessionStorage.getItem("transitops-session");
+  if (stored) {
+    const { token } = JSON.parse(stored);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});

@@ -1,8 +1,12 @@
-import client from "./client";
-import { mockMaintenanceApi } from "./mocks/service";
+import { mockApi, request } from "./adapter";
 
-const useMocks = import.meta.env.VITE_USE_MOCKS !== "false";
-
-export function getMaintenanceJobs() {
-  return useMocks ? mockMaintenanceApi.listJobs() : client.get("/maintenance");
-}
+export const getMaintenanceLogs = () =>
+  request(() => mockApi.getMaintenanceLogs(), { method: "get", url: "/api/maintenance-logs" });
+export const createMaintenanceLog = (payload) =>
+  request(() => mockApi.createMaintenanceLog(payload), {
+    method: "post",
+    url: "/api/maintenance-logs",
+    data: payload,
+  });
+export const closeMaintenanceLog = (id) =>
+  request(() => mockApi.closeMaintenanceLog(id), { method: "patch", url: `/api/maintenance-logs/${id}/close` });
