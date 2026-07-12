@@ -48,6 +48,7 @@ public class Trip {
 
     private Double fuelConsumed;
 
+    @Builder.Default
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
