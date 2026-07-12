@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AppShell from "../components/layout/AppShell";
-import { ROLE_ADMIN, ROLE_DISPATCHER, ROLE_MANAGER } from "../constants/roles";
 import AnalyticsPage from "../pages/AnalyticsPage";
 import DashboardPage from "../pages/DashboardPage";
 import DriversPage from "../pages/DriversPage";
@@ -12,6 +11,17 @@ import MaintenancePage from "../pages/MaintenancePage";
 import SettingsPage from "../pages/SettingsPage";
 import TripsPage from "../pages/TripsPage";
 import ProtectedRoute from "./ProtectedRoute";
+
+const protectedPages = [
+  { path: "/dashboard", pageKey: "dashboard", element: <DashboardPage /> },
+  { path: "/fleet", pageKey: "fleet", element: <FleetPage /> },
+  { path: "/drivers", pageKey: "drivers", element: <DriversPage /> },
+  { path: "/trips", pageKey: "trips", element: <TripsPage /> },
+  { path: "/maintenance", pageKey: "maintenance", element: <MaintenancePage /> },
+  { path: "/fuel-expenses", pageKey: "fuelExpenses", element: <FuelExpensesPage /> },
+  { path: "/analytics", pageKey: "analytics", element: <AnalyticsPage /> },
+  { path: "/settings", pageKey: "settings", element: <SettingsPage /> }
+];
 
 export default function AppRoutes() {
   return (
@@ -26,35 +36,13 @@ export default function AppRoutes() {
         }
       >
         <Route index element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/fleet" element={<FleetPage />} />
-        <Route path="/drivers" element={<DriversPage />} />
-        <Route path="/trips" element={<TripsPage />} />
-        <Route path="/maintenance" element={<MaintenancePage />} />
-        <Route
-          path="/fuel-expenses"
-          element={
-            <ProtectedRoute allowedRoles={[ROLE_ADMIN, ROLE_MANAGER]}>
-              <FuelExpensesPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/analytics"
-          element={
-            <ProtectedRoute allowedRoles={[ROLE_ADMIN, ROLE_MANAGER, ROLE_DISPATCHER]}>
-              <AnalyticsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute allowedRoles={[ROLE_ADMIN]}>
-              <SettingsPage />
-            </ProtectedRoute>
-          }
-        />
+        {protectedPages.map(({ path, pageKey, element }) => (
+          <Route
+            key={path}
+            path={path}
+            element={<ProtectedRoute pageKey={pageKey}>{element}</ProtectedRoute>}
+          />
+        ))}
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

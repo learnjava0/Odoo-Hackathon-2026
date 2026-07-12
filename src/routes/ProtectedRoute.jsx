@@ -1,17 +1,16 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAccess } from "../hooks/useAccess";
+import { hasPageAccess } from "../constants/roles";
 import { useAuth } from "../context/AuthContext";
 
-function ProtectedRoute({ allowedRoles, children }) {
+function ProtectedRoute({ pageKey, children }) {
+  const { isAuthenticated, user } = useAuth();
   const location = useLocation();
-  const { isAuthenticated } = useAuth();
-  const canAccess = useAccess(allowedRoles);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  if (!canAccess) {
+  if (pageKey && !hasPageAccess(user.role, pageKey)) {
     return <Navigate to="/forbidden" replace />;
   }
 
