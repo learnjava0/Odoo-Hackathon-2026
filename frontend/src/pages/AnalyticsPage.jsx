@@ -73,16 +73,16 @@ export default function AnalyticsPage() {
       />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Fuel Efficiency" value={`${fuelEfficiencyRows[0]?.efficiency ?? "0.00"} km/l`} />
-        <StatCard label="Fleet Utilization" value={`${getFleetUtilization(vehicles, trips).toFixed(1)}%`} accent="text-sky-400" />
-        <StatCard label="Operational Cost" value={currency(operationalRows.reduce((sum, item) => sum + item.amount, 0))} accent="text-amber-400" />
-        <StatCard label="Vehicle ROI" value={roiRows[0]?.roi ?? "0%"} accent="text-green-400" />
+        <StatCard label="Fleet Utilization" value={`${getFleetUtilization(vehicles, trips).toFixed(1)}%`} accent="text-sky-600" />
+        <StatCard label="Operational Cost" value={currency(operationalRows.reduce((sum, item) => sum + item.amount, 0))} accent="text-amber-600" />
+        <StatCard label="Vehicle ROI" value={roiRows[0]?.roi ?? "0%"} accent="text-emerald-600" />
       </div>
       <div className="grid gap-6 xl:grid-cols-2">
         <Card className="h-80">
-          <h2 className="mb-4 text-lg font-semibold text-slate-100">Monthly Breakdown</h2>
+          <h2 className="mb-4 text-lg font-semibold text-slate-950">Monthly Breakdown</h2>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={monthlyBreakdown}>
-              <CartesianGrid stroke="#1e293b" />
+              <CartesianGrid stroke="#e2e8f0" />
               <XAxis dataKey="label" stroke="#64748b" />
               <YAxis stroke="#64748b" />
               <Tooltip formatter={(value) => currency(value)} />
@@ -91,10 +91,10 @@ export default function AnalyticsPage() {
           </ResponsiveContainer>
         </Card>
         <Card className="h-80">
-          <h2 className="mb-4 text-lg font-semibold text-slate-100">Top Cost / Asset Breakdown</h2>
+          <h2 className="mb-4 text-lg font-semibold text-slate-950">Top Cost / Asset Breakdown</h2>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={costPerVehicle} layout="vertical">
-              <CartesianGrid stroke="#1e293b" />
+              <CartesianGrid stroke="#e2e8f0" />
               <XAxis type="number" stroke="#64748b" />
               <YAxis dataKey="vehicle" type="category" stroke="#64748b" width={80} />
               <Tooltip formatter={(value) => currency(value)} />
@@ -106,7 +106,7 @@ export default function AnalyticsPage() {
       <div className="grid gap-6 xl:grid-cols-2">
         <Card className="h-80">
           <div className="mb-4 flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-slate-100">Operational Cost Breakdown</h2>
+            <h2 className="text-lg font-semibold text-slate-950">Operational Cost Breakdown</h2>
             <div className="text-slate-500"><Info className="h-4 w-4" /></div>
           </div>
           <ResponsiveContainer width="100%" height="100%">
@@ -119,7 +119,7 @@ export default function AnalyticsPage() {
           </ResponsiveContainer>
         </Card>
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-100">Fuel Efficiency by Vehicle</h2>
+          <h2 className="mb-4 text-lg font-semibold text-slate-950">Fuel Efficiency by Vehicle</h2>
           <Table
             columns={[{ key: "vehicle", label: "Vehicle" }, { key: "efficiency", label: "Distance / Fuel" }]}
             rows={fuelEfficiencyRows}
@@ -134,7 +134,7 @@ export default function AnalyticsPage() {
       </div>
       <div className="grid gap-6 xl:grid-cols-3">
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-100">Fleet Utilization Over Time</h2>
+          <h2 className="mb-4 text-lg font-semibold text-slate-950">Fleet Utilization Over Time</h2>
           <Table
             columns={[{ key: "vehicle", label: "Vehicle" }, { key: "utilization", label: "Utilization" }]}
             rows={utilizationRows}
@@ -147,7 +147,7 @@ export default function AnalyticsPage() {
           />
         </Card>
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-100">Operational Cost Breakdown</h2>
+          <h2 className="mb-4 text-lg font-semibold text-slate-950">Operational Cost Breakdown</h2>
           <Table
             columns={[{ key: "category", label: "Category" }, { key: "amount", label: "Amount" }]}
             rows={operationalRows}
@@ -160,7 +160,7 @@ export default function AnalyticsPage() {
           />
         </Card>
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-100">Vehicle ROI</h2>
+          <h2 className="mb-4 text-lg font-semibold text-slate-950">Vehicle ROI</h2>
           <Table
             columns={[{ key: "vehicle", label: "Vehicle" }, { key: "roi", label: "ROI" }]}
             rows={roiRows}

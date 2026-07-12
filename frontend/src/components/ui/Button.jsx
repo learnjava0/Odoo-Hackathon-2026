@@ -2,10 +2,10 @@ import { LoaderCircle } from "lucide-react";
 import { cn } from "../../utils/classNames";
 
 const variants = {
-  primary: "bg-amber-500 text-slate-950 hover:bg-amber-400",
-  secondary: "bg-slate-800 text-slate-200 hover:bg-slate-700",
-  ghost: "bg-transparent text-slate-300 hover:bg-slate-800",
-  danger: "bg-red-500/90 text-white hover:bg-red-500",
+  primary: "bg-slate-950 text-white shadow-sm shadow-slate-300 hover:bg-slate-800",
+  secondary: "border border-slate-200 bg-white text-slate-800 shadow-sm hover:bg-slate-50",
+  ghost: "bg-transparent text-slate-700 hover:bg-slate-100",
+  danger: "bg-red-600 text-white shadow-sm shadow-red-200 hover:bg-red-500",
 };
 
 export function Button({
@@ -19,7 +19,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60",
+        "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-60",
         variants[variant],
         className,
       )}

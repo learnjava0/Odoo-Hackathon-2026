@@ -5,4 +5,8 @@ export const getVehicle = (id) => request(() => mockApi.getVehicle(id), { method
 export const createVehicle = (payload) =>
   request(() => mockApi.createVehicle(payload), { method: "post", url: "/api/vehicles", data: payload });
 export const updateVehicle = (id, payload) =>
-  request(() => mockApi.updateVehicle(id, payload), { method: "put", url: `/api/vehicles/${id}`, data: payload });
+  request(() => mockApi.updateVehicle(id, payload), {
+    method: "put",
+    url: `/api/vehicles/${id}/status`,
+    params: { status: payload.status },
+  });

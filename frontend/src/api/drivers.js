@@ -5,4 +5,8 @@ export const getDriver = (id) => request(() => mockApi.getDriver(id), { method: 
 export const createDriver = (payload) =>
   request(() => mockApi.createDriver(payload), { method: "post", url: "/api/drivers", data: payload });
 export const updateDriver = (id, payload) =>
-  request(() => mockApi.updateDriver(id, payload), { method: "put", url: `/api/drivers/${id}`, data: payload });
+  request(() => mockApi.updateDriver(id, payload), {
+    method: "put",
+    url: `/api/drivers/${id}/status`,
+    params: { status: payload.status },
+  });

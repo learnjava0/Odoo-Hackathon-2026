@@ -86,26 +86,26 @@ export default function DashboardPage() {
       </Card>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-7">
         <StatCard label="Active Vehicles" value={number(vehicles.filter((item) => item.status !== "RETIRED").length)} />
-        <StatCard label="Available Vehicles" value={number(vehicles.filter((item) => item.status === "AVAILABLE").length)} accent="text-green-400" />
-        <StatCard label="Vehicles in Maintenance" value={number(vehicles.filter((item) => item.status === "IN_SHOP").length)} accent="text-amber-400" />
-        <StatCard label="Active Trips" value={number(filteredTrips.filter((item) => item.status === "DISPATCHED").length)} accent="text-sky-400" />
+        <StatCard label="Available Vehicles" value={number(vehicles.filter((item) => item.status === "AVAILABLE").length)} accent="text-emerald-600" />
+        <StatCard label="Vehicles in Maintenance" value={number(vehicles.filter((item) => item.status === "IN_SHOP").length)} accent="text-amber-600" />
+        <StatCard label="Active Trips" value={number(filteredTrips.filter((item) => item.status === "DISPATCHED").length)} accent="text-sky-600" />
         <StatCard label="Pending Trips" value={number(filteredTrips.filter((item) => item.status === "DRAFT").length)} />
         <StatCard label="Drivers On Duty" value={number(drivers.filter((item) => item.status === "ON_TRIP").length)} />
-        <StatCard label="Fleet Utilization" value={`${number(getFleetUtilization(vehicles, trips), 1)}%`} accent="text-amber-400" />
+        <StatCard label="Fleet Utilization" value={`${number(getFleetUtilization(vehicles, trips), 1)}%`} accent="text-amber-600" />
       </div>
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <Card>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-100">Recent Trips</h2>
+            <h2 className="text-lg font-semibold text-slate-950">Recent Trips</h2>
             <p className="text-sm text-slate-500">{filteredTrips.length} visible</p>
           </div>
           {filteredTrips.length ? (
             <div className="space-y-3">
               {filteredTrips.slice(0, 8).map((trip) => (
-                <div key={trip.id} className="flex flex-col gap-3 rounded-lg border border-slate-800 bg-slate-950/50 p-4 md:flex-row md:items-center md:justify-between">
+                <div key={trip.id} className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <p className="font-medium text-slate-100">{trip.source} to {trip.destination}</p>
-                    <p className="text-sm text-slate-500">{number(trip.cargoWeight)} kg cargo · {number(trip.plannedDistance)} km</p>
+                    <p className="font-medium text-slate-950">{trip.source} to {trip.destination}</p>
+                    <p className="text-sm text-slate-500">{number(trip.cargoWeight)} kg cargo | {number(trip.plannedDistance)} km</p>
                   </div>
                   <StatusBadge value={trip.status} />
                 </div>
@@ -116,8 +116,8 @@ export default function DashboardPage() {
           )}
         </Card>
         <Card>
-          <h2 className="mb-5 text-lg font-semibold text-slate-100">Vehicle Status</h2>
-          <div className="overflow-hidden rounded-full bg-slate-800">
+          <h2 className="mb-5 text-lg font-semibold text-slate-950">Vehicle Status</h2>
+          <div className="overflow-hidden rounded-full bg-slate-100">
             <div className="flex h-5">
               {statusBreakdown.map((segment) => (
                 <div key={segment.name} style={{ width: `${(segment.value / Math.max(vehicles.length, 1)) * 100}%`, backgroundColor: segment.color }} />
@@ -128,7 +128,7 @@ export default function DashboardPage() {
             {statusBreakdown.map((segment) => (
               <div key={segment.name} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: segment.color }} />{segment.name}</div>
-                <span className="text-slate-400">{segment.value}</span>
+                <span className="text-slate-600">{segment.value}</span>
               </div>
             ))}
           </div>
@@ -136,10 +136,10 @@ export default function DashboardPage() {
       </div>
       <div className="grid gap-6 xl:grid-cols-3">
         <Card className="h-80">
-          <h2 className="mb-4 text-lg font-semibold text-slate-100">Trips Over Time</h2>
+          <h2 className="mb-4 text-lg font-semibold text-slate-950">Trips Over Time</h2>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={tripTrend}>
-              <CartesianGrid stroke="#1e293b" />
+              <CartesianGrid stroke="#e2e8f0" />
               <XAxis dataKey="label" stroke="#64748b" />
               <YAxis stroke="#64748b" />
               <Tooltip />
@@ -148,10 +148,10 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         </Card>
         <Card className="h-80">
-          <h2 className="mb-4 text-lg font-semibold text-slate-100">Utilization Trend</h2>
+          <h2 className="mb-4 text-lg font-semibold text-slate-950">Utilization Trend</h2>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={utilizationTrend}>
-              <CartesianGrid stroke="#1e293b" />
+              <CartesianGrid stroke="#e2e8f0" />
               <XAxis dataKey="label" stroke="#64748b" />
               <YAxis stroke="#64748b" />
               <Tooltip />
@@ -160,7 +160,7 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         </Card>
         <Card className="h-80">
-          <h2 className="mb-4 text-lg font-semibold text-slate-100">Cost Breakdown</h2>
+          <h2 className="mb-4 text-lg font-semibold text-slate-950">Cost Breakdown</h2>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie data={costBreakdown} dataKey="value" nameKey="name" innerRadius={60} outerRadius={90}>

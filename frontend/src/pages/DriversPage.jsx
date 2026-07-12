@@ -106,10 +106,10 @@ export default function DriversPage() {
                   <td className="px-4 py-3">{driver.name}</td>
                   <td className="px-4 py-3">{driver.licenseNumber}</td>
                   <td className="px-4 py-3">{driver.licenseCategory}</td>
-                  <td className={`px-4 py-3 ${license.tone === "red" ? "text-red-400" : license.tone === "amber" ? "text-amber-400" : "text-slate-300"}`}>
+                  <td className={`px-4 py-3 ${license.tone === "red" ? "text-red-600" : license.tone === "amber" ? "text-amber-600" : "text-slate-700"}`}>
                     {formatDate(driver.licenseExpiryDate)}
                   </td>
-                  <td className="px-4 py-3 text-slate-400">{driver.contactNumber}</td>
+                  <td className="px-4 py-3 text-slate-600">{driver.contactNumber}</td>
                   <td className="px-4 py-3">{driver.safetyScore}</td>
                   <td className="px-4 py-3"><StatusBadge value={driver.status} /></td>
                   <td className="px-4 py-3">
@@ -148,12 +148,12 @@ export default function DriversPage() {
           <div className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2">
               <Card>
-                <p className="text-sm text-slate-400">Driver</p>
-                <p className="mt-2 text-xl font-semibold text-slate-100">{detail.name}</p>
-                <p className="mt-1 text-sm text-slate-500">{detail.licenseNumber} · Safety Score {detail.safetyScore}</p>
+                <p className="text-sm text-slate-600">Driver</p>
+                <p className="mt-2 text-xl font-semibold text-slate-950">{detail.name}</p>
+                <p className="mt-1 text-sm text-slate-500">{detail.licenseNumber} | Safety Score {detail.safetyScore}</p>
               </Card>
               <Card className="h-52">
-                <h3 className="mb-4 text-lg font-semibold text-slate-100">Safety Score Trend</h3>
+                <h3 className="mb-4 text-lg font-semibold text-slate-950">Safety Score Trend</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={[0, 1, 2, 3, 4].map((index) => ({ label: `P${index + 1}`, value: Math.max(65, detail.safetyScore - 4 + index) }))}>
                     <XAxis dataKey="label" stroke="#64748b" />
@@ -165,10 +165,10 @@ export default function DriversPage() {
               </Card>
             </div>
             <Card>
-              <h3 className="mb-4 text-lg font-semibold text-slate-100">Trip History</h3>
+              <h3 className="mb-4 text-lg font-semibold text-slate-950">Trip History</h3>
               <div className="space-y-3">
                 {trips.filter((trip) => trip.driverId === detail.id).slice(0, 6).map((trip) => (
-                  <div key={trip.id} className="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-950/60 p-3">
+                  <div key={trip.id} className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-3">
                     <span>{trip.source} to {trip.destination}</span>
                     <StatusBadge value={trip.status} />
                   </div>

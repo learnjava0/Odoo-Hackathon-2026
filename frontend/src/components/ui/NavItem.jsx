@@ -16,8 +16,8 @@ function NavItem({ item }) {
       to={item.to}
       className={({ isActive }) =>
         cn(
-          "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-slate-900 hover:text-white",
-          isActive && "bg-slate-900 text-white"
+          "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950",
+          isActive && "bg-slate-950 text-white"
         )
       }
     >

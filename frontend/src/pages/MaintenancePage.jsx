@@ -1,42 +1,43 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useAppData } from "../context/AppDataContext";
-import { useAccess } from "../hooks/useAccess";
 import { formatDate } from "../utils/dateHelpers";
-import { currency } from "../utils/calculations";
-import { Button } from "../components/ui/Button";
-import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
-import { Input } from "../components/ui/Input";
 import { PageHeader } from "../components/ui/PageHeader";
-import { Select } from "../components/ui/Select";
-import { Skeleton } from "../components/ui/Skeleton";
 import { StatusBadge } from "../components/ui/StatusBadge";
-import { Table } from "../components/ui/Table";
 
 function MaintenancePage() {
   const { maintenanceLogs = [] } = useAppData();
 
   return (
-    <div>
-      <PageHeader title="Maintenance" description="Scheduled work and parts status scaffold for fleet upkeep." />
-      <div className="grid gap-4 lg:grid-cols-2">
-        {maintenanceLogs.map((job) => (
-          <section key={job.id} className="panel panel-body">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <h3 className="text-lg font-semibold text-white">{job.vehicle}</h3>
-                <p className="mt-2 text-sm text-slate-400">Due {formatDate(job.endDate ?? job.startDate)}</p>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Service Operations"
+        title="Maintenance"
+        description="Scheduled work, completion status, and service history for vehicles that need attention."
+      />
+      {maintenanceLogs.length ? (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {maintenanceLogs.map((job) => (
+            <section key={job.id} className="panel p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-600">
+                    {job.active ? "Open service" : "Closed service"}
+                  </p>
+                  <h3 className="mt-2 text-lg font-semibold text-slate-950">{job.vehicleName ?? job.vehicle ?? `Vehicle #${job.vehicleId}`}</h3>
+                  <p className="mt-2 text-sm text-slate-600">Due {formatDate(job.endDate ?? job.startDate)}</p>
+                </div>
+                <StatusBadge value={job.active ? "IN_SHOP" : "COMPLETED"} />
               </div>
-              <span className="rounded-lg bg-slate-800 px-3 py-2 text-xs uppercase tracking-[0.16em] text-cyan-400">
-                {job.active ? "Active" : "Closed"}
-              </span>
-            </div>
-            <p className="mt-4 text-sm text-slate-300">{job.description}</p>
-          </section>
-        ))}
-      </div>
+              <div className="mt-5 border-l-2 border-slate-200 pl-4">
+                <p className="text-sm font-medium text-slate-900">{job.description}</p>
+                <p className="mt-2 text-sm text-slate-500">Service window started {formatDate(job.startDate)}</p>
+              </div>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <EmptyState title="No maintenance records" description="Service history will appear here once maintenance activity is logged." />
+      )}
     </div>
   );
 }

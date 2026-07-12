@@ -93,7 +93,7 @@ export default function FuelExpensesPage() {
               renderRow={(log) => (
                 <tr key={log.id}>
                   <td className="px-4 py-3">{vehicles.find((vehicle) => vehicle.id === log.vehicleId)?.nameModel}</td>
-                  <td className="px-4 py-3 text-slate-400">{log.logDate}</td>
+                  <td className="px-4 py-3 text-slate-600">{log.logDate}</td>
                   <td className="px-4 py-3">{log.liters}</td>
                   <td className="px-4 py-3">{currency(log.cost)}</td>
                 </tr>
@@ -117,7 +117,7 @@ export default function FuelExpensesPage() {
                 <td className="px-4 py-3">{vehicles.find((vehicle) => vehicle.id === expense.vehicleId)?.nameModel}</td>
                 <td className="px-4 py-3">{expense.description}</td>
                 <td className="px-4 py-3">{currency(expense.amount)}</td>
-                <td className="px-4 py-3 text-slate-400">#{expense.tripId ?? "—"}</td>
+                <td className="px-4 py-3 text-slate-600">#{expense.tripId ?? "-"}</td>
                 <td className="px-4 py-3"><StatusBadge value={expense.tripId ? "COMPLETED" : "DRAFT"} /></td>
               </tr>
             )}
@@ -127,9 +127,9 @@ export default function FuelExpensesPage() {
         )}
         <div className="grid gap-3 md:grid-cols-3">
           {rollups.map((item) => (
-            <div key={item.vehicle} className="rounded-lg border border-slate-800 bg-slate-950/60 p-4">
-              <p className="text-sm text-slate-400">{item.vehicle}</p>
-              <p className="mt-2 text-lg font-semibold text-amber-400">Total Operational Cost: {currency(item.total)}</p>
+            <div key={item.vehicle} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <p className="text-sm text-slate-600">{item.vehicle}</p>
+              <p className="mt-2 text-lg font-semibold text-amber-600">Total Operational Cost: {currency(item.total)}</p>
             </div>
           ))}
         </div>

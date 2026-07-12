@@ -8,28 +8,28 @@
   }
 
   body {
-    @apply bg-slate-950 text-slate-200 antialiased;
+    @apply bg-slate-50 text-slate-900 antialiased dark:bg-ink-950 dark:text-slate-100;
   }
 
   * {
-    scrollbar-color: #475569 #0f172a;
+    scrollbar-color: #cbd5e1 #f8fafc;
   }
 }
 
 @layer components {
   .panel {
-    @apply rounded-lg border border-slate-800 bg-slate-900/90 shadow-panel;
+    @apply rounded-xl border border-slate-200 bg-white shadow-sm shadow-slate-200/60 dark:border-slate-800 dark:bg-ink-900 dark:shadow-slate-900/60;
   }
 
   .panel-muted {
-    @apply rounded-lg border border-slate-800 bg-slate-950/60;
+    @apply rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-ink-850;
   }
 
   .input-base {
-    @apply w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 disabled:cursor-not-allowed disabled:opacity-60;
+    @apply w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm shadow-slate-200/40 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-500/10 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-70 dark:border-slate-800 dark:bg-ink-900 dark:text-slate-100 dark:shadow-slate-900/40 dark:focus:ring-amber-500/20 dark:placeholder:text-slate-500 dark:disabled:bg-slate-900;
   }
 
   .label-base {
-    @apply mb-2 block text-sm font-medium text-slate-300;
+    @apply mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300;
   }
 }

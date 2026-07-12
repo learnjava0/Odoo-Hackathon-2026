@@ -1,7 +1,7 @@
 import { apiClient } from "./client";
 import { mockApi } from "./mocks/service";
 
-const useMocks = import.meta.env.VITE_USE_MOCKS !== "false";
+const useMocks = import.meta.env.VITE_USE_MOCKS === "true";
 
 export async function request(mockHandler, config) {
   if (useMocks) {

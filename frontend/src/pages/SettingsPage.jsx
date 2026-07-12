@@ -34,14 +34,14 @@ export default function SettingsPage() {
         <Input label="Primary Contact Email" value="ops@transitops.io" readOnly />
       </Card>
       <Card>
-        <h2 className="mb-4 text-lg font-semibold text-slate-100">Role ↔ Page Access Matrix</h2>
+        <h2 className="mb-4 text-lg font-semibold text-slate-950">Role to Page Access Matrix</h2>
         <div className="overflow-auto">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-800">
-                <th className="px-4 py-3 text-left text-slate-400">Role</th>
+              <tr className="border-b border-slate-200">
+                <th className="px-4 py-3 text-left text-slate-600">Role</th>
                 {NAV_ITEMS.map((item) => (
-                  <th key={item.pageKey} className="px-4 py-3 text-left text-slate-400">
+                  <th key={item.pageKey} className="px-4 py-3 text-left text-slate-600">
                     {item.label}
                   </th>
                 ))}
@@ -49,16 +49,16 @@ export default function SettingsPage() {
             </thead>
             <tbody>
               {roleKeys.map((role) => (
-                <tr key={role} className="border-b border-slate-800/80">
-                  <td className="px-4 py-3 font-medium text-slate-200">{ROLE_LABELS[role]}</td>
+                <tr key={role} className="border-b border-slate-200">
+                  <td className="px-4 py-3 font-medium text-slate-800">{ROLE_LABELS[role]}</td>
                   {NAV_ITEMS.map((item) => (
                     <td key={item.pageKey} className="px-4 py-3">
                       <button
                         type="button"
-                        className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-slate-300"
+                        className="min-w-16 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
                         onClick={() => toggleCell(item.pageKey, role)}
                       >
-                        {matrix[item.pageKey][role] === "full" ? "✓" : matrix[item.pageKey][role] === "view" ? "👁" : "–"}
+                        {matrix[item.pageKey][role] === "full" ? "Full" : matrix[item.pageKey][role] === "view" ? "View" : "None"}
                       </button>
                     </td>
                   ))}

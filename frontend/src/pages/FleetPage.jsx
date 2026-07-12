@@ -134,10 +134,10 @@ export default function FleetPage() {
             sort={sort}
             onSort={(key) => setSort((prev) => ({ key, direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc" }))}
             renderRow={(vehicle) => (
-              <tr key={vehicle.id} className="bg-slate-950/35">
+              <tr key={vehicle.id} className="bg-white hover:bg-slate-50 dark:bg-ink-900 dark:hover:bg-ink-850">
                 <td className="px-4 py-3">{vehicle.registrationNumber}</td>
                 <td className="px-4 py-3">{vehicle.nameModel}</td>
-                <td className="px-4 py-3 text-slate-400">{vehicle.type}</td>
+                <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{vehicle.type}</td>
                 <td className="px-4 py-3">{number(vehicle.maxLoadCapacity)} kg</td>
                 <td className="px-4 py-3">{number(vehicle.odometer)} km</td>
                 <td className="px-4 py-3">{currency(vehicle.acquisitionCost)}</td>
@@ -154,7 +154,7 @@ export default function FleetPage() {
         ) : (
           <EmptyState title="No vehicles found" description="Try widening your search or filters to bring vehicles back into the registry table." />
         )}
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           Registration number must be unique. Retired/In Shop vehicles are hidden from Trip Dispatcher.
         </p>
       </Card>
@@ -169,7 +169,7 @@ export default function FleetPage() {
           <Select label="Status" error={errors.status?.message} {...register("status")}>
             {["AVAILABLE", "ON_TRIP", "IN_SHOP", "RETIRED"].map((status) => <option key={status}>{status}</option>)}
           </Select>
-          {serverError ? <p className="text-sm text-red-400 md:col-span-2">{serverError}</p> : null}
+          {serverError ? <p className="text-sm text-red-600 md:col-span-2">{serverError}</p> : null}
           <div className="md:col-span-2 flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button>
             <Button type="submit" loading={isSubmitting}>Save Vehicle</Button>
@@ -181,23 +181,23 @@ export default function FleetPage() {
           <div className="space-y-5">
             <div className="grid gap-4 md:grid-cols-2">
               <Card>
-                <p className="text-sm text-slate-400">Vehicle</p>
-                <p className="mt-2 text-xl font-semibold text-slate-100">{detail.nameModel}</p>
-                <p className="mt-1 text-sm text-slate-500">{detail.registrationNumber} · {detail.type}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Vehicle</p>
+                <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-slate-100">{detail.nameModel}</p>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-500">{detail.registrationNumber} | {detail.type}</p>
               </Card>
               <Card>
-                <p className="text-sm text-slate-400">Operational Cost</p>
-                <p className="mt-2 text-xl font-semibold text-amber-400">
+                <p className="text-sm text-slate-600 dark:text-slate-400">Operational Cost</p>
+                <p className="mt-2 text-xl font-semibold text-amber-600 dark:text-amber-500">
                   {currency(getOperationalCost(detail.id, fuelLogs, maintenanceLogs, expenses).total)}
                 </p>
               </Card>
             </div>
             <Card>
-              <h3 className="mb-3 text-lg font-semibold text-slate-100">Linked Trips</h3>
+              <h3 className="mb-3 text-lg font-semibold text-slate-950 dark:text-slate-100">Linked Trips</h3>
               <div className="space-y-3">
                 {trips.filter((trip) => trip.vehicleId === detail.id).slice(0, 5).map((trip) => (
-                  <div key={trip.id} className="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-950/60 p-3">
-                    <span>{trip.source} to {trip.destination}</span>
+                  <div key={trip.id} className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-ink-850">
+                    <span className="dark:text-slate-200">{trip.source} to {trip.destination}</span>
                     <StatusBadge value={trip.status} />
                   </div>
                 ))}

@@ -28,8 +28,8 @@ export default function LoginPage() {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      email: "maya@transitops.io",
-      password: "demo1234",
+      email: "admin@transitops.com",
+      password: "admin123",
       role: "FLEET_MANAGER",
       remember: true,
     },
@@ -45,7 +45,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-screen bg-slate-950 lg:grid-cols-[1.05fr_0.95fr]">
+    <div className="grid min-h-screen bg-white lg:grid-cols-[1.05fr_0.95fr]">
       <section className="hidden flex-col justify-between bg-white p-10 text-slate-900 lg:flex">
         <div>
           <div className="mb-8 flex items-center gap-3">
@@ -77,11 +77,11 @@ export default function LoginPage() {
       </section>
       <section className="flex items-center justify-center p-6">
         <div className="panel w-full max-w-lg p-8">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-amber-400">Welcome back</p>
-          <h2 className="text-3xl font-semibold text-slate-100">Sign in to TransitOps</h2>
-          <p className="mt-3 text-sm text-slate-400">Use one of the seeded demo accounts to explore the role-based flows.</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-amber-600">Welcome back</p>
+          <h2 className="text-3xl font-semibold text-slate-950">Sign in to TransitOps</h2>
+          <p className="mt-3 text-sm text-slate-600">Use a seeded backend account to explore the role-based flows.</p>
           <form className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)}>
-            <Input label="Email" placeholder="maya@transitops.io" error={errors.email?.message} {...register("email")} />
+            <Input label="Email" placeholder="admin@transitops.com" error={errors.email?.message} {...register("email")} />
             <Input
               label="Password"
               type="password"
@@ -97,8 +97,8 @@ export default function LoginPage() {
               ))}
             </Select>
             <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-slate-400">
-                <input type="checkbox" className="rounded border-slate-700 bg-slate-900" {...register("remember")} />
+              <label className="flex items-center gap-2 text-slate-600">
+                <input type="checkbox" className="rounded border-slate-300 bg-white" {...register("remember")} />
                 Remember me
               </label>
               <button type="button" className="text-slate-500">

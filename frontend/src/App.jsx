@@ -17,6 +17,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/forbidden" element={<ForbiddenPage />} />
       <Route path="/403" element={<ForbiddenPage />} />
       <Route element={<ProtectedRoute />}>
         <Route
