@@ -23,7 +23,12 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Administration" title="Settings" description="General organization settings and the editable role-to-page access matrix shown in the approved mockup." actions={<Button onClick={() => toast.success("Settings saved locally for demo mode.")}>Save changes</Button>} />
+      <PageHeader
+        eyebrow="Administration"
+        title="Settings"
+        description="General organization settings and the editable role-to-page access matrix shown in the approved mockup."
+        actions={<Button onClick={() => toast.success("Settings saved locally for demo mode.")}>Save changes</Button>}
+      />
       <Card className="grid gap-4 md:grid-cols-2">
         <Input label="Organization Name" value={orgName} onChange={(event) => setOrgName(event.target.value)} />
         <Input label="Primary Contact Email" value="ops@transitops.io" readOnly />
@@ -36,7 +41,9 @@ export default function SettingsPage() {
               <tr className="border-b border-slate-800">
                 <th className="px-4 py-3 text-left text-slate-400">Role</th>
                 {NAV_ITEMS.map((item) => (
-                  <th key={item.pageKey} className="px-4 py-3 text-left text-slate-400">{item.label}</th>
+                  <th key={item.pageKey} className="px-4 py-3 text-left text-slate-400">
+                    {item.label}
+                  </th>
                 ))}
               </tr>
             </thead>
