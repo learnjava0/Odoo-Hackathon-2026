@@ -8,15 +8,19 @@ import DriversPage from "./pages/DriversPage";
 import FleetPage from "./pages/FleetPage";
 import ForbiddenPage from "./pages/ForbiddenPage";
 import FuelExpensesPage from "./pages/FuelExpensesPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import LoginPage from "./pages/LoginPage";
 import MaintenancePage from "./pages/MaintenancePage";
 import SettingsPage from "./pages/SettingsPage";
+import SignupPage from "./pages/SignupPage";
 import TripsPage from "./pages/TripsPage";
 
 export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/forbidden" element={<ForbiddenPage />} />
       <Route path="/403" element={<ForbiddenPage />} />
       <Route element={<ProtectedRoute />}>

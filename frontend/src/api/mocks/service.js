@@ -31,8 +31,13 @@ function syncAvailabilityFromTripsAndMaintenance() {
 }
 
 export const mockApi = {
-  async login({ email }) {
-    const user = mockState.users.find((item) => item.email === email) ?? mockState.users[0];
+  async login({ email, role }) {
+    // Find user by email OR by role (for demo accounts)
+    let user = mockState.users.find((item) => item.email === email);
+    if (!user && role) {
+      user = mockState.users.find((item) => item.role === role);
+    }
+    user = user ?? mockState.users[0];
     return wait({ token: `mock-token-${user.id}`, user });
   },
   async getVehicles() {

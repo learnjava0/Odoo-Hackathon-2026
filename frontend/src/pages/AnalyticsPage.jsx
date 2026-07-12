@@ -13,6 +13,7 @@ import {
 import { Download, FileText } from "lucide-react";
 import { useAppData } from "../context/AppDataContext";
 import { exportToCsv } from "../utils/csvExport";
+import { exportAnalyticsPdf } from "../utils/pdfExport";
 import { currency, getFleetUtilization, getFuelEfficiencyForVehicle, getVehicleRoi } from "../utils/calculations";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -64,7 +65,19 @@ export default function AnalyticsPage() {
           <Button variant="secondary" onClick={() => exportToCsv("fuel-efficiency.csv", fuelEfficiencyRows)}>
             <Download className="h-4 w-4" /> Export CSV
           </Button>
-          <Button variant="ghost" disabled title="Coming soon">
+          <Button variant="ghost" onClick={() => exportAnalyticsPdf({
+            fuelEfficiencyRows,
+            operationalRows,
+            roiRows,
+            costPerVehicle,
+            monthlyBreakdown,
+            kpis: {
+              fuelEfficiency: `${fuelEfficiencyRows[0]?.efficiency ?? "0.00"} km/l`,
+              fleetUtilization: `${getFleetUtilization(vehicles, trips).toFixed(1)}%`,
+              operationalCost: currency(operationalRows.reduce((sum, item) => sum + item.amount, 0)),
+              vehicleRoi: roiRows[0]?.roi ?? "0%",
+            },
+          })}>
             <FileText className="h-4 w-4" /> PDF Export
           </Button>
         </div>
