@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
 import { AppDataProvider } from "./context/AppDataContext";
-import { ProtectedRoute } from "./routes/ProtectedRoute";
+import ProtectedRoute from "./routes/ProtectedRoute";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import DashboardPage from "./pages/DashboardPage";
 import DriversPage from "./pages/DriversPage";
@@ -26,8 +26,9 @@ export default function App() {
             </AppDataProvider>
           }
         >
+          <Route index element={<DashboardPage />} />
           <Route element={<ProtectedRoute pageKey="dashboard" />}>
-            <Route index element={<DashboardPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
           </Route>
           <Route element={<ProtectedRoute pageKey="fleet" />}>
             <Route path="/fleet" element={<FleetPage />} />

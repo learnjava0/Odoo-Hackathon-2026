@@ -11,7 +11,7 @@ import {
 import { hasPageAccess } from "./roles";
 
 export const NAV_ITEMS = [
-  { label: "Dashboard", path: "/", pageKey: "dashboard", icon: LayoutDashboard },
+  { label: "Dashboard", path: "/dashboard", pageKey: "dashboard", icon: LayoutDashboard },
   { label: "Fleet", path: "/fleet", pageKey: "fleet", icon: Truck },
   { label: "Drivers", path: "/drivers", pageKey: "drivers", icon: Users },
   { label: "Trips", path: "/trips", pageKey: "trips", icon: ClipboardList },
