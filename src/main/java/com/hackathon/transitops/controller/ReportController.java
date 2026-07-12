@@ -8,6 +8,8 @@ import com.hackathon.transitops.repository.ExpenseRepository;
 import com.hackathon.transitops.repository.FuelLogRepository;
 import com.hackathon.transitops.repository.MaintenanceRepository;
 import com.hackathon.transitops.repository.VehicleRepository;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,11 +55,8 @@ public class ReportController {
 
         BigDecimal totalOperationalCost = totalFuelCost.add(totalMaintenanceCost).add(totalExpenses);
         
-        // Mock Revenue calculation (in a real app, trips would have revenue)
-        // Let's assume revenue is distance * $2
         BigDecimal estimatedRevenue = BigDecimal.valueOf(vehicle.getOdometer() * 2.0);
 
-        // ROI = (Revenue - Operational Cost) / Acquisition Cost
         BigDecimal roi = BigDecimal.ZERO;
         if (vehicle.getAcquisitionCost().compareTo(BigDecimal.ZERO) > 0) {
             roi = estimatedRevenue.subtract(totalOperationalCost)
@@ -72,5 +71,33 @@ public class ReportController {
         report.put("roiPercentage", String.format("%.2f", roi));
 
         return ResponseEntity.ok(report);
+    }
+
+    @GetMapping("/export/csv")
+    @PreAuthorize("hasAnyRole('FLEET_MANAGER', 'FINANCIAL_ANALYST')")
+    public ResponseEntity<byte[]> exportVehiclesCsv() {
+        List<Vehicle> vehicles = vehicleRepository.findAll();
+        StringBuilder csvContent = new StringBuilder();
+        csvContent.append("Registration Number,Model,Type,Capacity,Odometer,Status,Acquisition Cost\n");
+        
+        for (Vehicle v : vehicles) {
+            csvContent.append(String.format("%s,%s,%s,%.2f,%.2f,%s,%.2f\n",
+                    v.getRegistrationNumber(),
+                    v.getNameModel(),
+                    v.getType(),
+                    v.getMaxLoadCapacity(),
+                    v.getOdometer(),
+                    v.getStatus(),
+                    v.getAcquisitionCost()));
+        }
+
+        byte[] output = csvContent.toString().getBytes();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("text/csv"));
+        headers.setContentDispositionFormData("attachment", "vehicles_report.csv");
+        
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(output);
     }
 }
