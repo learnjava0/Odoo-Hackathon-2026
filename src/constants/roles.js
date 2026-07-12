@@ -1,26 +1,65 @@
-export const ROLE_ADMIN = "admin";
-export const ROLE_MANAGER = "manager";
-export const ROLE_DISPATCHER = "dispatcher";
+export const ROLE_LABELS = {
+  FLEET_MANAGER: "Fleet Manager",
+  DRIVER: "Dispatcher",
+  SAFETY_OFFICER: "Safety Officer",
+  FINANCIAL_ANALYST: "Financial Analyst",
+};
 
-export const ALL_ROLES = [ROLE_ADMIN, ROLE_MANAGER, ROLE_DISPATCHER];
+export const ROLE_ADMIN = "FLEET_MANAGER";
+export const ROLE_MANAGER = "FLEET_MANAGER";
+export const ROLE_DISPATCHER = "DRIVER";
 
 export const PAGE_ACCESS = {
-  dashboard: ALL_ROLES,
-  fleet: ALL_ROLES,
-  drivers: ALL_ROLES,
-  trips: ALL_ROLES,
-  maintenance: ALL_ROLES,
-  analytics: ALL_ROLES,
-  fuelExpenses: [ROLE_ADMIN, ROLE_MANAGER],
-  settings: [ROLE_ADMIN]
+  dashboard: {
+    FLEET_MANAGER: "full",
+    DRIVER: "own",
+    SAFETY_OFFICER: "full",
+    FINANCIAL_ANALYST: "full",
+  },
+  fleet: {
+    FLEET_MANAGER: "full",
+    DRIVER: "none",
+    SAFETY_OFFICER: "none",
+    FINANCIAL_ANALYST: "view",
+  },
+  drivers: {
+    FLEET_MANAGER: "full",
+    DRIVER: "none",
+    SAFETY_OFFICER: "view",
+    FINANCIAL_ANALYST: "none",
+  },
+  trips: {
+    FLEET_MANAGER: "full",
+    DRIVER: "full",
+    SAFETY_OFFICER: "view",
+    FINANCIAL_ANALYST: "none",
+  },
+  maintenance: {
+    FLEET_MANAGER: "full",
+    DRIVER: "none",
+    SAFETY_OFFICER: "none",
+    FINANCIAL_ANALYST: "view",
+  },
+  fuelExpenses: {
+    FLEET_MANAGER: "full",
+    DRIVER: "none",
+    SAFETY_OFFICER: "none",
+    FINANCIAL_ANALYST: "full",
+  },
+  analytics: {
+    FLEET_MANAGER: "full",
+    DRIVER: "none",
+    SAFETY_OFFICER: "none",
+    FINANCIAL_ANALYST: "full",
+  },
+  settings: {
+    FLEET_MANAGER: "full",
+    DRIVER: "none",
+    SAFETY_OFFICER: "none",
+    FINANCIAL_ANALYST: "none",
+  },
 };
 
 export function hasPageAccess(role, pageKey) {
-  const allowedRoles = PAGE_ACCESS[pageKey];
-
-  if (!allowedRoles) {
-    return true;
-  }
-
-  return allowedRoles.includes(role);
+  return PAGE_ACCESS[pageKey]?.[role] && PAGE_ACCESS[pageKey][role] !== "none";
 }

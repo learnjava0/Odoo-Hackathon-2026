@@ -1,24 +1,28 @@
 import {
   BarChart3,
+  ClipboardList,
   Fuel,
   LayoutDashboard,
   Settings,
-  ShieldAlert,
+  ShieldCheck,
   Truck,
-  UserRound,
-  Waypoints,
-  Wrench
+  Users,
 } from "lucide-react";
-import { ALL_ROLES, ROLE_ADMIN, ROLE_MANAGER } from "./roles";
+import { hasPageAccess } from "./roles";
 
-export const navigationItems = [
-  { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, roles: ALL_ROLES },
-  { label: "Fleet", to: "/fleet", icon: Truck, roles: ALL_ROLES },
-  { label: "Drivers", to: "/drivers", icon: UserRound, roles: ALL_ROLES },
-  { label: "Trips", to: "/trips", icon: Waypoints, roles: ALL_ROLES },
-  { label: "Maintenance", to: "/maintenance", icon: Wrench, roles: ALL_ROLES },
-  { label: "Fuel Expenses", to: "/fuel-expenses", icon: Fuel, roles: [ROLE_ADMIN, ROLE_MANAGER] },
-  { label: "Analytics", to: "/analytics", icon: BarChart3, roles: ALL_ROLES },
-  { label: "Settings", to: "/settings", icon: Settings, roles: [ROLE_ADMIN] },
-  { label: "Forbidden", to: "/forbidden", icon: ShieldAlert, roles: ALL_ROLES }
+export const NAV_ITEMS = [
+  { label: "Dashboard", path: "/", pageKey: "dashboard", icon: LayoutDashboard },
+  { label: "Fleet", path: "/fleet", pageKey: "fleet", icon: Truck },
+  { label: "Drivers", path: "/drivers", pageKey: "drivers", icon: Users },
+  { label: "Trips", path: "/trips", pageKey: "trips", icon: ClipboardList },
+  { label: "Maintenance", path: "/maintenance", pageKey: "maintenance", icon: ShieldCheck },
+  { label: "Fuel & Expenses", path: "/fuel-expenses", pageKey: "fuelExpenses", icon: Fuel },
+  { label: "Analytics", path: "/analytics", pageKey: "analytics", icon: BarChart3 },
+  { label: "Settings", path: "/settings", pageKey: "settings", icon: Settings },
 ];
+
+export const navigationItems = NAV_ITEMS;
+
+export function getVisibleNavItems(role) {
+  return NAV_ITEMS.filter((item) => hasPageAccess(role, item.pageKey));
+}
