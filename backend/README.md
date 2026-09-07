@@ -75,6 +75,36 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
 ```
 
+  ## Deploy to AWS App Runner
+
+  The backend includes a Java 21 `Dockerfile` for AWS App Runner. Use Amazon RDS for PostgreSQL; do not use the local database values in production.
+
+  1. Create an RDS PostgreSQL database and allow inbound PostgreSQL traffic from the App Runner VPC connector/security group. Record its database name, endpoint, username, and password.
+  2. Build and push the image to Amazon ECR from the `backend` directory:
+
+  ```bash
+  aws ecr create-repository --repository-name transitops-backend --region <aws-region>
+  aws ecr get-login-password --region <aws-region> | docker login --username AWS --password-stdin <account-id>.dkr.ecr.<aws-region>.amazonaws.com
+  docker build -t transitops-backend .
+  docker tag transitops-backend:latest <account-id>.dkr.ecr.<aws-region>.amazonaws.com/transitops-backend:latest
+  docker push <account-id>.dkr.ecr.<aws-region>.amazonaws.com/transitops-backend:latest
+  ```
+
+  3. Create an App Runner service from the ECR image. Set the container port to `8080` and configure these environment variables:
+
+  ```text
+  SPRING_DATASOURCE_URL=jdbc:postgresql://<rds-endpoint>:5432/<database-name>
+  SPRING_DATASOURCE_USERNAME=<rds-username>
+  SPRING_DATASOURCE_PASSWORD=<rds-password>
+  SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  SPRING_JPA_SHOW_SQL=false
+  JWT_SECRET=<random-base64-secret-at-least-256-bits>
+  JWT_EXPIRATION=86400000
+  CORS_ALLOWED_ORIGINS=https://<frontend-domain>
+  ```
+
+  Use App Runner secrets or AWS Secrets Manager for the database password and `JWT_SECRET`. Attach an App Runner VPC connector if the RDS instance is private. After deployment, use the App Runner HTTPS URL as the frontend's `VITE_API_BASE_URL`.
+
 ---
 
 ## Architecture
